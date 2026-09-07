@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif Matematika Kelas 5 - Persiapan Asesmen</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-700 via-indigo-700 to-sky-600 text-white shadow-lg sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-white/20 p-2.5 rounded-2xl backdrop-blur-sm">
+                    <svg class="w-8 h-8 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Kuis Matematika Kelas 5</h1>
+                    <p class="text-xs sm:text-sm text-blue-100">Persiapan Asesmen: Jutaan, PEMDAS, 4 Operasi & Estimasi</p>
+                </div>
+            </div>
+
+            <!-- Score Summary Dashboard -->
+            <div class="flex items-center gap-3 bg-white/10 px-4 py-2 rounded-xl backdrop-blur-md border border-white/20">
+                <div class="text-center px-2">
+                    <span class="block text-xs text-blue-200">Total Skor</span>
+                    <span id="header-score" class="text-lg font-extrabold text-yellow-300">0 / 90</span>
+                </div>
+                <div class="h-8 w-px bg-white/20"></div>
+                <div class="text-center px-2">
+                    <span class="block text-xs text-blue-200">Akurasi</span>
+                    <span id="header-accuracy" class="text-lg font-extrabold text-emerald-300">0%</span>
+                </div>
+                <button onclick="openResetModal()" title="Ulangi Semua Kuis" class="ml-2 bg-red-500/80 hover:bg-red-600 text-white p-2 rounded-lg transition text-xs flex items-center gap-1 shadow">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    <span class="hidden sm:inline">Reset</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sub-Topic Navigation Tabs -->
+        <div class="bg-blue-900/40 border-t border-white/10 backdrop-blur-md">
+            <div class="max-w-7xl mx-auto px-4 flex overflow-x-auto space-x-2 py-2 custom-scrollbar">
+                <button onclick="switchTab(0)" id="tab-btn-0" class="tab-button whitespace-nowrap px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2">
+                    <span>1. Bilangan Jutaan</span>
+                    <span id="badge-tab-0" class="bg-white/20 text-xs px-2 py-0.5 rounded-full">0/30</span>
+                </button>
+                <button onclick="switchTab(1)" id="tab-btn-1" class="tab-button whitespace-nowrap px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2">
+                    <span>2. PEMDAS</span>
+                    <span id="badge-tab-1" class="bg-white/20 text-xs px-2 py-0.5 rounded-full">0/30</span>
+                </button>
+                <button onclick="switchTab(2)" id="tab-btn-2" class="tab-button whitespace-nowrap px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2">
+                    <span>3. Operasi & Estimasi</span>
+                    <span id="badge-tab-2" class="bg-white/20 text-xs px-2 py-0.5 rounded-full">0/30</span>
+                </button>
+                <button onclick="switchTab(3)" id="tab-btn-3" class="tab-button whitespace-nowrap px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2">
+                    <span>📊 Ringkasan Hasil</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+        
+        <!-- Offline / Auto-save notification banner -->
+        <div id="save-indicator" class="mb-4 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 rounded-xl text-xs sm:text-sm flex items-center justify-between shadow-sm">
+            <div class="flex items-center gap-2">
+                <span class="relative flex h-2.5 w-2.5">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                <span>Progres tersimpan secara otomatis di peramban Anda. Aman dari mati listrik / muat ulang halaman.</span>
+            </div>
+            <span class="font-mono text-emerald-600 font-semibold" id="last-saved-time">Tersimpan</span>
+        </div>
+
+        <!-- TAB CONTENT 0, 1, 2 (Topics) -->
+        <div id="quiz-view" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+            <!-- Left Grid: Question Navigator Sidebar -->
+            <div class="lg:col-span-1 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col gap-4">
+                <div>
+                    <h2 id="topic-title" class="font-bold text-slate-800 text-base">Topik Matematika</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Pilih nomor soal untuk berpindah cepat:</p>
+                </div>
+
+                <!-- Topic Progress Bar -->
+                <div>
+                    <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+                        <span>Progres Sub-Topik</span>
+                        <span id="topic-progress-text">0 / 30 Dijawab</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                        <div id="topic-progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Question Grid Navigation Buttons -->
+                <div id="question-grid" class="grid grid-cols-5 gap-2 max-h-[360px] overflow-y-auto custom-scrollbar p-1">
+                    <!-- Dynamic Question Buttons 1 to 30 -->
+                </div>
+
+                <!-- Status Legend -->
+                <div class="pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-[11px] text-slate-600">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded bg-slate-200 border border-slate-300"></span>
+                        <span>Belum</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded bg-emerald-500 text-white"></span>
+                        <span>Benar</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded bg-rose-500 text-white"></span>
+                        <span>Salah</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Active Question Display -->
+            <div class="lg:col-span-3 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                <div>
+                    <!-- Question Header Info -->
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100 gap-2">
+                        <div class="flex items-center gap-2">
+                            <span id="question-number-badge" class="bg-blue-100 text-blue-800 font-bold px-3 py-1 rounded-lg text-sm">
+                                Soal #1
+                            </span>
+                            <span id="paper-tag" class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-1 rounded-md">
+                                Paper 1 (Fluency)
+                            </span>
+                        </div>
+                        <span id="subtopic-name-header" class="text-xs font-semibold text-slate-400">Sub-Topik 1</span>
+                    </div>
+
+                    <!-- Question Text -->
+                    <div class="my-6">
+                        <div id="question-text" class="text-base sm:text-lg text-slate-800 font-medium leading-relaxed">
+                            Loading pertanyaan...
+                        </div>
+                    </div>
+
+                    <!-- Answer Options -->
+                    <div id="options-container" class="space-y-3 my-6">
+                        <!-- Dynamic Options A, B, C, D -->
+                    </div>
+
+                    <!-- Instant Feedback & Pembahasan Box -->
+                    <div id="feedback-box" class="hidden p-4 sm:p-5 rounded-xl border transition-all duration-300 my-4">
+                        <div class="flex items-center gap-2 font-bold text-sm sm:text-base mb-1" id="feedback-title">
+                            <!-- Correct/Incorrect Title -->
+                        </div>
+                        <div id="feedback-explanation" class="text-xs sm:text-sm text-slate-700 leading-relaxed mt-1">
+                            <!-- Explanation -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Navigation Buttons -->
+                <div class="pt-6 border-t border-slate-100 flex justify-between items-center gap-3">
+                    <button id="prev-btn" onclick="navigateQuestion(-1)" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition text-sm flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Sebelumnya
+                    </button>
+                    <div class="text-xs font-medium text-slate-400 hidden sm:block" id="question-counter-footer">
+                        Soal 1 dari 30
+                    </div>
+                    <button id="next-btn" onclick="navigateQuestion(1)" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition text-sm flex items-center gap-2 shadow-md hover:shadow-lg">
+                        Selanjutnya
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT 3: Summary & Analytics View -->
+        <div id="summary-view" class="hidden space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">📊 Ringkasan Hasil Latihan Kuis</h2>
+                <p class="text-sm text-slate-600 mb-6">Berikut adalah evaluasi performa belajar berdasarkan 3 sub-topik materi asesmen matematika:</p>
+
+                <!-- Overall Stats Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="p-5 bg-blue-50 border border-blue-100 rounded-xl">
+                        <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider block mb-1">Total Soal Terjawab</span>
+                        <span id="summary-total-answered" class="text-2xl sm:text-3xl font-extrabold text-blue-900">0 / 90</span>
+                    </div>
+                    <div class="p-5 bg-emerald-50 border border-emerald-100 rounded-xl">
+                        <span class="text-xs font-semibold text-emerald-600 uppercase tracking-wider block mb-1">Jawaban Benar</span>
+                        <span id="summary-correct" class="text-2xl sm:text-3xl font-extrabold text-emerald-900">0</span>
+                    </div>
+                    <div class="p-5 bg-rose-50 border border-rose-100 rounded-xl">
+                        <span class="text-xs font-semibold text-rose-600 uppercase tracking-wider block mb-1">Jawaban Salah</span>
+                        <span id="summary-incorrect" class="text-2xl sm:text-3xl font-extrabold text-rose-900">0</span>
+                    </div>
+                    <div class="p-5 bg-amber-50 border border-amber-100 rounded-xl">
+                        <span class="text-xs font-semibold text-amber-600 uppercase tracking-wider block mb-1">Nilai Akhir / Akurasi</span>
+                        <span id="summary-score-percent" class="text-2xl sm:text-3xl font-extrabold text-amber-900">0%</span>
+                    </div>
+                </div>
+
+                <!-- Breakdown by Topic -->
+                <h3 class="font-bold text-slate-800 text-lg mb-4">Rincian Per Sub-Topik</h3>
+                <div class="space-y-4" id="summary-topic-breakdown">
+                    <!-- Dynamic Breakdown Bars -->
+                </div>
+
+                <!-- Action buttons -->
+                <div class="mt-8 pt-6 border-t border-slate-100 flex flex-wrap gap-4">
+                    <button onclick="switchTab(0)" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-sm transition">
+                        Kembali Latihan Soal
+                    </button>
+                    <button onclick="openResetModal()" class="px-5 py-2.5 bg-rose-100 hover:bg-rose-200 text-rose-700 font-semibold rounded-xl text-sm transition">
+                        Reset & Ulangi Kuis Dari Awal
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Custom Modal Confirmation for Reset -->
+    <div id="reset-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+            <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mb-4 mx-auto">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 text-center mb-2">Reset Seluruh Hasil Kuis?</h3>
+            <p class="text-xs sm:text-sm text-slate-600 text-center mb-6">
+                Tindakan ini akan menghapus semua jawaban yang telah tersimpan dan mengembalikan skor ke 0.
+            </p>
+            <div class="flex gap-3">
+                <button onclick="closeResetModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition">
+                    Batal
+                </button>
+                <button onclick="confirmReset()" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-xl text-sm transition shadow-md">
+                    Ya, Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        <p>Aplikasi Kuis Latihan Matematika Kelas 5 SD • Materi Asesmen Sesuai Kurikulum</p>
+    </footer>
+
+    <!-- JavaScript Quiz Engine & Complete Question Bank (90 Questions) -->
+    <script>
+        const topics = [
+            {
+                id: "numbers",
+                title: "1. Read, Write, Compare & Order Numbers up to Millions",
+                subtitle: "Sub-Topik 1: Membaca, Menulis, Membandingkan & Mengurutkan Bilangan hingga Jutaan"
+            },
+            {
+                id: "pemdas",
+                title: "2. PEMDAS (Order of Operations)",
+                subtitle: "Sub-Topik 2: PEMDAS / Urutan Operasi Hitung Campuran"
+            },
+            {
+                id: "operations_estimation",
+                title: "3. Four Math Operations & Estimation",
+                subtitle: "Sub-Topik 3: Empat Operasi Hitung & Penaksiran / Estimasi Hasil"
+            }
+        ];
+
+        // Raw Question Sets (3 Subtopics x 30 Questions)
+        const rawQuestions = {
+            // TOPIC 0: Numbers up to Millions (30 Questions)
+            0: [
+                { q: "Lambang bilangan dari 'Dua juta empat ratus lima puluh ribu delapan ratus' adalah...", options: ["2.450.800", "2.045.800", "2.405.800", "2.540.800"], correct: 0, exp: "Dua juta (2.000.000) + empat ratus lima puluh ribu (450.000) + delapan ratus (800) = 2.450.800.", paper: "Paper 1" },
+                { q: "Pada bilangan 5.832.190, nilai tempat angka 8 adalah...", options: ["Puluh ribuan", "Ratus ribuan", "Jutaan", "Ratusan"], correct: 1, exp: "Angka 8 berada di posisi ke-3 dari kiri (ratus ribuan), yaitu 800.000.", paper: "Paper 1" },
+                { q: "Manakah tanda pertidaksamaan yang tepat untuk: 3.725.100 ... 3.752.100?", options: [">", "<", "=", "≥"], correct: 1, exp: "3.725.100 lebih kecil dari 3.752.100 karena angka puluh ribuan 2 < 5.", paper: "Paper 1" },
+                { q: "Urutkan bilangan berikut dari yang TERKECIL: 4.120.000; 4.021.000; 4.201.000; 4.102.000.", options: ["4.021.000; 4.102.000; 4.120.000; 4.201.000", "4.102.000; 4.021.000; 4.120.000; 4.201.000", "4.021.000; 4.120.000; 4.102.000; 4.201.000", "4.201.000; 4.120.000; 4.102.000; 4.021.000"], correct: 0, exp: "Urutan dari nilai terkecil: 4.021.000 < 4.102.000 < 4.120.000 < 4.201.000.", paper: "Paper 1" },
+                { q: "Jumlah penduduk Kota A adalah 1.250.000 jiwa, sedangkan Kota B adalah 1.520.000 jiwa. Pernyataan yang BENAR adalah...", options: ["Penduduk Kota A lebih banyak dari Kota B", "Penduduk Kota B lebih banyak dari Kota A", "Penduduk Kota A sama dengan Kota B", "Selisih penduduk adalah 300.000 jiwa"], correct: 1, exp: "1.520.000 > 1.250.000, sehingga penduduk Kota B lebih banyak daripada Kota A.", paper: "Paper 2" },
+                { q: "Bentuk panjang dari bilangan 6.049.300 adalah...", options: ["6.000.000 + 400.000 + 9.000 + 300", "6.000.000 + 40.000 + 9.000 + 300", "6.000.000 + 4.000 + 900 + 300", "600.000 + 40.000 + 9.000 + 300"], correct: 1, exp: "6.049.300 = 6.000.000 + 0 + 40.000 + 9.000 + 300 + 0 + 0.", paper: "Paper 1" },
+                { q: "Angka 7 pada bilangan 7.912.450 memiliki nilai digit sebesar...", options: ["700.000", "70.000", "7.000.000", "70.000.000"], correct: 2, exp: "Angka 7 berada di tempat jutaan, jadi nilainya 7.000.000.", paper: "Paper 1" },
+                { q: "Sebuah perusahaan mencetak 8.500.000 lembar buku. Cara membaca bilangan tersebut adalah...", options: ["Delapan juta lima ratus ribu", "Delapan juta lima puluh ribu", "Delapan puluh lima ribu", "Delapan juta lima ratus"], correct: 0, exp: "8.500.000 dibaca 'Delapan juta lima ratus ribu'.", paper: "Paper 1" },
+                { q: "Bilangan manakah yang bernilai paling mendekati 5.000.000?", options: ["4.999.900", "5.000.200", "4.990.000", "5.010.000"], correct: 0, exp: "Selisih 4.999.900 ke 5.000.000 hanya 100, paling kecil di antara pilihan lain.", paper: "Paper 1" },
+                { q: "Di antara pilihan berikut, manakah bilangan yang LEBIH BESAR dari 6.840.000?", options: ["6.839.999", "6.840.001", "6.804.999", "6.799.999"], correct: 1, exp: "6.840.001 selisih 1 lebih besar dibanding 6.840.000.", paper: "Paper 1" },
+                { q: "Suatu perpustakaan digital memiliki 3.008.050 koleksi artikel. Dibaca...", options: ["Tiga juta delapan ribu lima puluh", "Tiga juta delapan puluh ribu lima puluh", "Tiga juta delapan ratus ribu lima puluh", "Tiga juta delapan ribu lima ratus"], correct: 0, exp: "3.008.050 dibaca 'Tiga juta delapan ribu lima puluh'.", paper: "Paper 1" },
+                { q: "Nilai tempat dari angka 0 yang dicetak tebal pada 1.2<b>0</b>5.600 adalah...", options: ["Ratusan", "Puluh ribuan", "Ratus ribuan", "Jutaan"], correct: 1, exp: "Angka 0 ketiga dari kanan adalah puluh ribuan.", paper: "Paper 1" },
+                { q: "Jika 4.560.000 ditambahkan 100.000, hasilnya adalah...", options: ["4.660.000", "5.560.000", "4.570.000", "4.650.000"], correct: 0, exp: "4.560.000 + 100.000 = 4.660.000.", paper: "Paper 1" },
+                { q: "Pemerintah membagikan 2.750.000 bibit tanaman di Provinsi X dan 2.705.000 bibit di Provinsi Y. Pernyataan yang benar adalah...", options: ["Provinsi X menerima bibit lebih sedikit", "Provinsi X menerima bibit lebih banyak", "Jumlah bibit kedua provinsi sama", "Provinsi Y menerima 50.000 bibit lebih banyak"], correct: 1, exp: "2.750.000 > 2.705.000, jadi Provinsi X menerima lebih banyak bibit.", paper: "Paper 2" },
+                { q: "Selisih nilai tempat angka 9 dan angka 3 pada bilangan 9.430.000 adalah...", options: ["9.000.000 - 30.000 = 8.970.000", "900.000 - 30.000 = 870.000", "9.000.000 - 300.000 = 8.700.000", "90.000 - 3.000 = 87.000"], correct: 0, exp: "Angka 9 bernilai 9.000.000 dan angka 3 bernilai 30.000. Selisih = 8.970.000.", paper: "Paper 1" },
+                { q: "Urutkan dari yang TERBESAR: 7.800.000; 7.080.000; 7.880.000; 7.008.000.", options: ["7.880.000; 7.800.000; 7.080.000; 7.008.000", "7.880.000; 7.080.000; 7.800.000; 7.008.000", "7.008.000; 7.080.000; 7.800.000; 7.880.000", "7.800.000; 7.880.000; 7.080.000; 7.008.000"], correct: 0, exp: "Urutan terbesar ke terkecil: 7.880.000 > 7.800.000 > 7.080.000 > 7.008.000.", paper: "Paper 1" },
+                { q: "Bilangan 9.999.999 jika ditambah 1 akan menjadi...", options: ["10.000.000 (Sepuluh juta)", "1.000.000 (Satu juta)", "100.000.000 (Seratus juta)", "99.999.100"], correct: 0, exp: "9.999.999 + 1 = 10.000.000 (Sepuluh juta).", paper: "Paper 1" },
+                { q: "Dalam angka 5.555.555, angka 5 yang memiliki nilai 500.000 berada pada posisi tempat...", options: ["Ratus ribuan", "Puluh ribuan", "Jutaan", "Ratusan"], correct: 0, exp: "500.000 menyatakan posisi nilai tempat ratus ribuan.", paper: "Paper 1" },
+                { q: "Tuliskan dalam angka: 'Lima juta sembilan ratus ribu tujuh puluh'.", options: ["5.900.070", "5.090.070", "5.900.700", "5.970.000"], correct: 0, exp: "5.000.000 + 900.000 + 70 = 5.900.070.", paper: "Paper 1" },
+                { q: "Manakah pasangan bilangan berikut yang memiliki hubungan B > A?", options: ["A = 1.450.000, B = 1.540.000", "A = 2.300.000, B = 2.030.000", "A = 3.600.000, B = 3.600.000", "A = 4.100.000, B = 4.099.000"], correct: 0, exp: "Untuk A = 1.450.000 dan B = 1.540.000, jelas B > A.", paper: "Paper 1" },
+                { q: "Ibu kota kabupaten A berjarak 1.050.000 cm dan kabupaten B berjarak 1.500.000 cm. Jarak yang lebih jauh adalah...", options: ["Kabupaten B", "Kabupaten A", "Kedua kabupaten sama jauh", "Tidak dapat ditentukan"], correct: 0, exp: "1.500.000 cm > 1.050.000 cm, jadi Kabupaten B lebih jauh.", paper: "Paper 2" },
+                { q: "Bilangan 3.425.000 dibulatkan ke ratus ribuan terdekat menjadi...", options: ["3.400.000", "3.500.000", "3.000.000", "3.430.000"], correct: 0, exp: "Angka puluh ribuan adalah 2 (< 5), maka dibulatkan ke bawah menjadi 3.400.000.", paper: "Paper 1" },
+                { q: "Bilangan manakah yang memiliki angka 4 di nilai tempat puluh ribuan?", options: ["2.145.600", "2.415.600", "4.215.600", "2.154.600"], correct: 0, exp: "Pada 2.145.600, angka 4 berada di tempat puluh ribuan (40.000).", paper: "Paper 1" },
+                { q: "Manakah pernyataan yang BENAR mengenai 8.210.000 dan 8.120.000?", options: ["8.210.000 > 8.120.000", "8.210.000 < 8.120.000", "8.210.000 = 8.120.000", "8.120.000 lebih besar dari 8.210.000"], correct: 0, exp: "8.210.000 > 8.120.000 karena angka ratus ribuan 2 > 1.", paper: "Paper 1" },
+                { q: "Sebuah akun media sosial mendapat 4.005.000 pengikut. Pernyataan penulisan yang tepat adalah...", options: ["Empat juta lima ribu", "Empat juta lima ratus ribu", "Empat juta lima puluh ribu", "Empat ratus lima ribu"], correct: 0, exp: "4.005.000 ditulis 'Empat juta lima ribu'.", paper: "Paper 1" },
+                { q: "Hasil dari 3.000.000 + 400.000 + 5.000 + 20 adalah...", options: ["3.405.020", "3.450.020", "3.045.020", "3.405.200"], correct: 0, exp: "3.000.000 + 400.000 + 5.000 + 20 = 3.405.020.", paper: "Paper 1" },
+                { q: "Penjualan tiket konser A = 1.800.000, B = 1.850.000, C = 1.790.000. Urutan konser dari tiket PALING BANYAK terjual:", options: ["B, A, C", "A, B, C", "C, A, B", "B, C, A"], correct: 0, exp: "1.850.000 (B) > 1.800.000 (A) > 1.790.000 (C).", paper: "Paper 2" },
+                { q: "Angka 2 pada 6.271.000 menunjukkan nilai...", options: ["200.000", "20.000", "2.000.000", "2.000"], correct: 0, exp: "Angka 2 berada di tempat ratus ribuan, jadi nilainya 200.000.", paper: "Paper 1" },
+                { q: "Di antara bilangan berikut, mana yang nilainya PALING KECIL?", options: ["1.009.999", "1.090.000", "1.000.999", "1.009.090"], correct: 2, exp: "1.000.999 adalah yang paling kecil karena angka ratus ribuannya 0 dan ribuannya 0.", paper: "Paper 1" },
+                { q: "Jika suatu bilangan terdiri dari 5 juta + 9 ratus ribu + 3 puluhan + 8 satuan, bilangan tersebut adalah...", options: ["5.900.038", "5.903.008", "5.090.038", "5.930.008"], correct: 0, exp: "5.000.000 + 900.000 + 30 + 8 = 5.900.038.", paper: "Paper 1" }
+            ],
+
+            // TOPIC 1: PEMDAS (30 Questions)
+            1: [
+                { q: "Hasil dari 12 + 8 × 5 adalah...", options: ["52", "100", "60", "96"], correct: 0, exp: "Perkalian dikerjakan terlebih dahulu: 8 × 5 = 40. Lalu 12 + 40 = 52.", paper: "Paper 1" },
+                { q: "Hasil dari (15 + 25) ÷ 5 adalah...", options: ["8", "20", "10", "12"], correct: 0, exp: "Operasi di dalam kurung dikerjakan dulu: 15 + 25 = 40. Lalu 40 ÷ 5 = 8.", paper: "Paper 1" },
+                { q: "Hasil dari 50 - 18 ÷ 3 + 4 adalah...", options: ["48", "14", "32", "20"], correct: 0, exp: "Pembagian dulu: 18 ÷ 3 = 6. Kemudian 50 - 6 + 4 = 44 + 4 = 48.", paper: "Paper 1" },
+                { q: "Berapakah nilai dari 6 × 4 + 18 ÷ 2?", options: ["33", "21", "42", "27"], correct: 0, exp: "Perkalian & pembagian dulu: (6×4) = 24 dan (18÷2) = 9. Lalu 24 + 9 = 33.", paper: "Paper 1" },
+                { q: "Hitunglah: 100 - (20 + 5 × 4) = ...", options: ["60", "360", "80", "40"], correct: 0, exp: "Di dalam kurung: 5 × 4 = 20, lalu 20 + 20 = 40. Kemudian 100 - 40 = 60.", paper: "Paper 1" },
+                { q: "Andi membeli 3 kantong kelereng. Tiap kantong berisi 10 kelereng. Lalu ia memberikan 8 kelereng kepada adiknya. Kalimat matematika yang tepat dan hasilnya adalah...", options: ["3 × 10 - 8 = 22", "3 + 10 - 8 = 5", "(3 + 10) × 8 = 104", "3 × (10 - 8) = 6"], correct: 0, exp: "Total kelereng = 3 × 10 = 30. Dikurangi 8 = 22 kelereng.", paper: "Paper 2" },
+                { q: "Hasil operasi dari 45 ÷ (9 - 4) + 7 adalah...", options: ["16", "2", "12", "20"], correct: 0, exp: "Kurung dulu: 9 - 4 = 5. Lalu 45 ÷ 5 = 9. Akhirnya 9 + 7 = 16.", paper: "Paper 1" },
+                { q: "Berapakah hasil dari 24 + 16 ÷ 4 × 2?", options: ["32", "20", "10", "40"], correct: 0, exp: "Pembagian dan perkalian dari kiri ke kanan: 16 ÷ 4 = 4, lalu 4 × 2 = 8. Terakhir 24 + 8 = 32.", paper: "Paper 1" },
+                { q: "Manakah bentuk operasi yang menghasilkan nilai 25?", options: ["(10 + 15) × 1", "10 + 15 × 2", "50 - 10 ÷ 2", "(30 - 10) + 10"], correct: 0, exp: "(10 + 15) × 1 = 25 × 1 = 25.", paper: "Paper 1" },
+                { q: "Hasil dari 80 - 5 × (6 + 4) adalah...", options: ["30", "750", "70", "50"], correct: 0, exp: "Kurung dulu: 6 + 4 = 10. Perkalian: 5 × 10 = 50. Pengurangan: 80 - 50 = 30.", paper: "Paper 1" },
+                { q: "Nilai dari 36 ÷ 6 × 3 adalah...", options: ["18", "2", "6", "12"], correct: 0, exp: "Perkalian dan pembagian setingkat, kerjakan dari kiri: 36 ÷ 6 = 6, lalu 6 × 3 = 18.", paper: "Paper 1" },
+                { q: "Pak Budi membawa 5 kotak apel, masing-masing berisi 12 apel. Sebanyak 15 apel dibagikan ke tetangga. Sisa apel Pak Budi adalah...", options: ["45 apel", "51 apel", "35 apel", "60 apel"], correct: 0, exp: "Operasi: 5 × 12 - 15 = 60 - 15 = 45 apel.", paper: "Paper 2" },
+                { q: "Hasil dari 7 + 3 × (10 - 2) ÷ 4 adalah...", options: ["13", "20", "10", "15"], correct: 0, exp: "Kurung: 10 - 2 = 8. Lalu 3 × 8 ÷ 4 = 24 ÷ 4 = 6. Ditambah 7: 7 + 6 = 13.", paper: "Paper 1" },
+                { q: "Berapakah hasil dari (50 - 20) ÷ (2 + 3)?", options: ["6", "10", "15", "5"], correct: 0, exp: "Kurung 1: 50 - 20 = 30. Kurung 2: 2 + 3 = 5. Pembagian: 30 ÷ 5 = 6.", paper: "Paper 1" },
+                { q: "Hitunglah: 18 + 12 ÷ 3 - 2 × 3 = ...", options: ["16", "24", "14", "18"], correct: 0, exp: "Pembagian & perkalian dulu: 12 ÷ 3 = 4, dan 2 × 3 = 6. Lalu 18 + 4 - 6 = 16.", paper: "Paper 1" },
+                { q: "Di toko ada 4 dus pensil. Setiap dus berisi 12 pensil. Pemilik menerima tambahan 10 pensil. Total pensil sekarang adalah...", options: ["58 pensil", "96 pensil", "48 pensil", "68 pensil"], correct: 0, exp: "Operasi: 4 × 12 + 10 = 48 + 10 = 58 pensil.", paper: "Paper 2" },
+                { q: "Hasil dari 100 ÷ 5 - 2 × 8 adalah...", options: ["4", "144", "16", "8"], correct: 0, exp: "100 ÷ 5 = 20. 2 × 8 = 16. Pengurangan: 20 - 16 = 4.", paper: "Paper 1" },
+                { q: "Berapakah hasil dari 15 × (8 - 3) + 25?", options: ["100", "75", "120", "90"], correct: 0, exp: "8 - 3 = 5. Perkalian: 15 × 5 = 75. Penjumlahan: 75 + 25 = 100.", paper: "Paper 1" },
+                { q: "Jika A = 20, B = 5, C = 2, berapakah nilai A - B × C?", options: ["10", "30", "15", "25"], correct: 0, exp: "A - B × C = 20 - (5 × 2) = 20 - 10 = 10.", paper: "Paper 1" },
+                { q: "Manakah operasi hitung yang memberikan hasil TERBESAR?", options: ["(10 + 5) × 4", "10 + 5 × 4", "10 × 5 + 4", "10 × (5 - 4)"], correct: 0, exp: "(10+5)×4 = 60. Opsi lain: 10+20=30; 50+4=54; 10×1=10.", paper: "Paper 1" },
+                { q: "Hasil dari 42 ÷ 7 + 5 × 6 adalah...", options: ["36", "66", "48", "30"], correct: 0, exp: "42 ÷ 7 = 6 dan 5 × 6 = 30. Lalu 6 + 30 = 36.", paper: "Paper 1" },
+                { q: "Santi punya 50 permen. Ia makan 5 permen, lalu sisanya dibagi rata kepada 5 temannya. Permen yang diterima tiap teman adalah...", options: ["9 permen", "10 permen", "8 permen", "5 permen"], correct: 0, exp: "Kalimat matematika: (50 - 5) ÷ 5 = 45 ÷ 5 = 9 permen.", paper: "Paper 2" },
+                { q: "Hasil dari 64 ÷ (16 - 8) × 3 adalah...", options: ["24", "8", "16", "32"], correct: 0, exp: "Kurung: 16 - 8 = 8. Pembagian: 64 ÷ 8 = 8. Perkalian: 8 × 3 = 24.", paper: "Paper 1" },
+                { q: "Hitunglah: (12 + 18) ÷ 6 + 4 × 5 = ...", options: ["25", "30", "18", "20"], correct: 0, exp: "(12+18) = 30. 30 ÷ 6 = 5. 4 × 5 = 20. Hasil: 5 + 20 = 25.", paper: "Paper 1" },
+                { q: "Berapakah hasil dari 90 - 40 ÷ 5 × 2?", options: ["74", "20", "84", "70"], correct: 0, exp: "40 ÷ 5 = 8, lalu 8 × 2 = 16. Kemudian 90 - 16 = 74.", paper: "Paper 1" },
+                { q: "Sebuah bus membawa 30 penumpang. Di selter A turun 8 orang dan naik 12 orang. Jumlah penumpang bus sekarang adalah...", options: ["34 orang", "26 orang", "38 orang", "40 orang"], correct: 0, exp: "30 - 8 + 12 = 22 + 12 = 34 orang.", paper: "Paper 2" },
+                { q: "Hasil dari 5 × (12 + 8) ÷ 10 adalah...", options: ["10", "12", "15", "8"], correct: 0, exp: "12 + 8 = 20. Perkalian: 5 × 20 = 100. Pembagian: 100 ÷ 10 = 10.", paper: "Paper 1" },
+                { q: "Nilai dari 75 - (25 + 15) ÷ 8 adalah...", options: ["70", "5", "65", "60"], correct: 0, exp: "25 + 15 = 40. Pembagian: 40 ÷ 8 = 5. Pengurangan: 75 - 5 = 70.", paper: "Paper 1" },
+                { q: "Berapakah hasil dari 14 + 6 × 2 - 10 ÷ 2?", options: ["21", "15", "19", "25"], correct: 0, exp: "Perkalian: 6 × 2 = 12. Pembagian: 10 ÷ 2 = 5. Hitung: 14 + 12 - 5 = 21.", paper: "Paper 1" },
+                { q: "Seorang pedagang punya 8 karung beras, masing-masing 25 kg. Dijual 120 kg. Sisa beras pedagang adalah...", options: ["80 kg", "100 kg", "60 kg", "90 kg"], correct: 0, exp: "Operasi: 8 × 25 - 120 = 200 - 120 = 80 kg.", paper: "Paper 2" }
+            ],
+
+            // TOPIC 2: Four Operations & Estimation (30 Questions)
+            2: [
+                { q: "Tentukan hasil estimasi terbaik dari 495 + 308 dengan membulatkan ke ratusan terdekat!", options: ["800", "700", "850", "900"], correct: 0, exp: "495 dibulat ke ratusan jadi 500. 308 dibulat ke ratusan jadi 300. 500 + 300 = 800.", paper: "Paper 1" },
+                { q: "Hasil perhitungan sebenarnya dari 1.250 × 4 adalah...", options: ["5.000", "4.800", "5.200", "6.000"], correct: 0, exp: "1.250 × 4 = 5.000.", paper: "Paper 1" },
+                { q: "Estimasi hasil perkalian 58 × 22 ke puluhan terdekat adalah...", options: ["1.200", "1.000", "1.400", "1.500"], correct: 0, exp: "58 dibulat ke 60. 22 dibulat ke 20. 60 × 20 = 1.200.", paper: "Paper 1" },
+                { q: "Pak Anton memanen 4.820 kg kelapa sawit pada hari pertama dan 3.190 kg pada hari kedua. Estimasi total hasil panen ke ribuan terdekat adalah...", options: ["8.000 kg", "7.000 kg", "9.000 kg", "8.500 kg"], correct: 0, exp: "4.820 dibulat ke 5.000. 3.190 dibulat ke 3.000. Total estimasi = 5.000 + 3.000 = 8.000 kg.", paper: "Paper 2" },
+                { q: "Hasil pembagian dari 8.400 ÷ 20 adalah...", options: ["420", "42", "4.200", "400"], correct: 0, exp: "8.400 ÷ 20 = 420.", paper: "Paper 1" },
+                { q: "Apakah hasil estimasi 2.900 - 1.150 = 1.800 masuk akal jika dibulatkan ke ratusan terdekat?", options: ["Ya, karena 2.900 - 1.100 = 1.800", "Tidak, seharusnya 2.000", "Ya, karena 3.000 - 1.000 = 2.000", "Tidak, hasil pastinya 1.500"], correct: 0, exp: "2.900 dibulat ke 2.900, 1.150 dibulat ke 1.100 atau 1.200. Estimasi sekitar 1.700 - 1.800 adalah masuk akal.", paper: "Paper 1" },
+                { q: "Hasil hitung nyata dari 345.000 + 255.000 adalah...", options: ["600.000", "500.000", "650.000", "550.000"], correct: 0, exp: "345.000 + 255.000 = 600.000.", paper: "Paper 1" },
+                { q: "Sebuah pabrik menghasilkan 15.000 unit barang dalam 30 hari. Berapa rata-rata produksi barang per hari?", options: ["500 unit", "50 unit", "1.500 unit", "450 unit"], correct: 0, exp: "15.000 ÷ 30 = 500 unit per hari.", paper: "Paper 2" },
+                { q: "Estimasi dari 7.820 ÷ 39 dengan pembulatan ke puluhan/ratusan terdekat adalah...", options: ["200", "20", "2000", "150"], correct: 0, exp: "7.820 dibulat ke 8.000, 39 dibulat ke 40. 8.000 ÷ 40 = 200.", paper: "Paper 1" },
+                { q: "Hasil pengurangan dari 1.000.000 - 435.000 adalah...", options: ["565.000", "575.000", "665.000", "535.000"], correct: 0, exp: "1.000.000 - 435.000 = 565.000.", paper: "Paper 1" },
+                { q: "Ibu membeli 4 baju seharga Rp 98.000 per baju. Estimasi total biaya baju yang dibayar Ibu adalah sekitar...", options: ["Rp 400.000", "Rp 300.000", "Rp 500.000", "Rp 350.000"], correct: 0, exp: "Rp 98.000 dibulatkan ke Rp 100.000. Maka 4 × Rp 100.000 = Rp 400.000.", paper: "Paper 2" },
+                { q: "Hasil perkalian dari 350 × 40 adalah...", options: ["14.000", "1.400", "140.000", "12.000"], correct: 0, exp: "35 × 4 = 140, tambahkan 2 nol = 14.000.", paper: "Paper 1" },
+                { q: "Berapakah hasil dari 750.000 ÷ 25?", options: ["30.000", "3.000", "300.000", "25.000"], correct: 0, exp: "75 ÷ 25 = 3, tambahkan 4 nol = 30.000.", paper: "Paper 1" },
+                { q: "Gudang A menampung 124.500 kg beras, Gudang B menampung 85.500 kg. Total beras kedua gudang adalah...", options: ["210.000 kg", "200.000 kg", "220.000 kg", "215.000 kg"], correct: 0, exp: "124.500 + 85.500 = 210.000 kg.", paper: "Paper 2" },
+                { q: "Penaksiran hasil dari 91 × 48 adalah...", options: ["4.500", "3.600", "5.000", "4.000"], correct: 0, exp: "91 dibulat ke 90, 48 dibulat ke 50. 90 × 50 = 4.500.", paper: "Paper 1" },
+                { q: "Hasil nyata dari 500.000 - 182.500 - 117.500 adalah...", options: ["200.000", "300.000", "250.000", "150.000"], correct: 0, exp: "182.500 + 117.500 = 300.000. Lalu 500.000 - 300.000 = 200.000.", paper: "Paper 1" },
+                { q: "Seorang pedagang membeli 12 kotak buah seharga Rp 49.500 per kotak. Manakah estimasi total harga yang paling wajar?", options: ["Rp 600.000", "Rp 500.000", "Rp 400.000", "Rp 700.000"], correct: 0, exp: "49.500 dibulat ke 50.000. Maka 12 × 50.000 = 600.000.", paper: "Paper 2" },
+                { q: "Hasil dari 125 × 8 × 10 adalah...", options: ["10.000", "1.000", "100.000", "8.000"], correct: 0, exp: "125 × 8 = 1.000, lalu 1.000 × 10 = 10.000.", paper: "Paper 1" },
+                { q: "Jika 1.500.000 dibagi dengan 300, hasilnya adalah...", options: ["5.000", "500", "50.000", "50"], correct: 0, exp: "1.500.000 ÷ 300 = 5.000.", paper: "Paper 1" },
+                { q: "Sebuah acara membutuhkan 2.950 kursi. Jika panitia menyewa 3.000 kursi, apakah penaksiran panitia mencukupi?", options: ["Mencukupi, karena 3.000 > 2.950", "Kurang, karena selisih 50 kursi", "Tidak dapat dihitung", "Sangat kurang"], correct: 0, exp: "3.000 > 2.950, penaksiran sangat aman dan mencukupi.", paper: "Paper 2" },
+                { q: "Hasil penjumlahan 4.320 + 2.680 + 1.000 adalah...", options: ["8.000", "7.000", "8.500", "7.500"], correct: 0, exp: "4.320 + 2.680 = 7.000, ditambah 1.000 = 8.000.", paper: "Paper 1" },
+                { q: "Estimasi dari 615 - 289 ke ratusan terdekat adalah...", options: ["300", "400", "200", "350"], correct: 0, exp: "615 dibulat ke 600, 289 dibulat ke 300. 600 - 300 = 300.", paper: "Paper 1" },
+                { q: "Hitunglah: 250.000 + (75.000 × 2) = ...", options: ["400.000", "650.000", "350.000", "500.000"], correct: 0, exp: "75.000 × 2 = 150.000. Lalu 250.000 + 150.000 = 400.000.", paper: "Paper 1" },
+                { q: "Pak Roni mendapat gaji Rp 3.600.000 per bulan. Berapa gaji yang ia terima dalam 1 semester (6 bulan)?", options: ["Rp 21.600.000", "Rp 18.000.000", "Rp 24.000.000", "Rp 21.000.000"], correct: 0, exp: "3.600.000 × 6 = 21.600.000.", paper: "Paper 2" },
+                { q: "Penaksiran terbaik dari 1.890 ÷ 21 ke puluhan terdekat adalah...", options: ["90", "100", "80", "95"], correct: 0, exp: "1.890 dibulat ke 1.800 atau 1.900, 21 dibulat ke 20. 1.800 ÷ 20 = 90.", paper: "Paper 1" },
+                { q: "Hasil perkalian dari 600 × 500 adalah...", options: ["300.000", "30.000", "3.000.000", "300.00"], correct: 0, exp: "6 × 5 = 30, tambahkan 4 nol = 300.000.", paper: "Paper 1" },
+                { q: "Sebuah tempat penampungan air berisi 850.000 liter. Digunakan untuk menyiram tanaman 275.000 liter dan kebutuhan warga 325.000 liter. Sisa air adalah...", options: ["250.000 liter", "300.000 liter", "200.000 liter", "150.000 liter"], correct: 0, exp: "Total guna = 275.000 + 325.000 = 600.000 liter. Sisa = 850.000 - 600.000 = 250.000 liter.", paper: "Paper 2" },
+                { q: "Hasil pembagian dari 450.000 ÷ 90 adalah...", options: ["5.000", "500", "50.000", "45.000"], correct: 0, exp: "450.000 ÷ 90 = 5.000.", paper: "Paper 1" },
+                { q: "Estimasi jumlah pengunjung pameran hari Sabtu (4.920 orang) dan Minggu (6.110 orang) ke ribuan terdekat adalah...", options: ["11.000 orang", "10.000 orang", "12.000 orang", "11.500 orang"], correct: 0, exp: "4.920 dibulat ke 5.000. 6.110 dibulat ke 6.000. 5.000 + 6.000 = 11.000 orang.", paper: "Paper 2" },
+                { q: "Hasil hitung dari (800.000 - 350.000) ÷ 5 adalah...", options: ["90.000", "80.000", "100.000", "95.000"], correct: 0, exp: "800.000 - 350.000 = 450.000. Lalu 450.000 ÷ 5 = 90.000.", paper: "Paper 1" }
+            ]
+        };
+
+        // App state
+        let quizData = [];
+        let userAnswers = {};
+        let currentTopic = 0;
+        let currentQuestion = 0;
+
+        // Seeded PRNG for consistent deterministic shuffle per question across reloads
+        function seededRandom(seed) {
+            let x = Math.sin(seed) * 10000;
+            return x - Math.floor(x);
+        }
+
+        function shuffleArrayWithSeed(array, seed) {
+            let arr = [...array];
+            let s = seed;
+            for (let i = arr.length - 1; i > 0; i--) {
+                s += 17;
+                let j = Math.floor(seededRandom(s) * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Initialize and shuffle options pseudo-randomly to break any fixed A-B-C-D pattern
+        function initQuestions() {
+            quizData = [];
+            
+            for (let t = 0; t < 3; t++) {
+                const topicQuestions = [];
+                const items = rawQuestions[t];
+
+                items.forEach((item, idx) => {
+                    const originalCorrectText = item.options[item.correct];
+                    
+                    // Unique seed per topic and question index
+                    const seed = (t + 1) * 1000 + (idx + 1) * 31;
+                    const shuffledOptions = shuffleArrayWithSeed(item.options, seed);
+                    const newCorrectIndex = shuffledOptions.indexOf(originalCorrectText);
+
+                    topicQuestions.push({
+                        q: item.q,
+                        options: shuffledOptions,
+                        correct: newCorrectIndex,
+                        exp: item.exp,
+                        paper: item.paper
+                    });
+                });
+
+                quizData.push(topicQuestions);
+            }
+        }
+
+        // LocalStorage Management
+        const STORAGE_KEY = "grade5_math_assessment_quiz_state_v2";
+
+        function loadSavedState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed.userAnswers) userAnswers = parsed.userAnswers;
+                    if (parsed.currentTopic !== undefined) currentTopic = parsed.currentTopic;
+                    if (parsed.currentQuestion !== undefined) currentQuestion = parsed.currentQuestion;
+                }
+            } catch (e) {
+                console.error("Gagal membaca storage:", e);
+            }
+        }
+
+        function saveState() {
+            try {
+                const data = {
+                    userAnswers,
+                    currentTopic,
+                    currentQuestion,
+                    timestamp: new Date().toISOString()
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('last-saved-time').innerText = 'Tersimpan ' + timeStr;
+            } catch (e) {
+                console.error("Gagal menyimpan progres:", e);
+            }
+        }
+
+        // Render Navigation Grid
+        function renderQuestionGrid() {
+            const gridContainer = document.getElementById("question-grid");
+            gridContainer.innerHTML = "";
+
+            const totalInTopic = quizData[currentTopic].length;
+            let answeredCount = 0;
+
+            for (let i = 0; i < totalInTopic; i++) {
+                const key = `${currentTopic}_${i}`;
+                const userAns = userAnswers[key];
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.innerText = i + 1;
+                
+                let baseClasses = "w-full aspect-square text-xs font-bold rounded-lg transition-all flex items-center justify-center border ";
+
+                if (userAns !== undefined) {
+                    answeredCount++;
+                    const isCorrect = userAns === quizData[currentTopic][i].correct;
+                    if (isCorrect) {
+                        baseClasses += "bg-emerald-500 text-white border-emerald-600 shadow-sm";
+                    } else {
+                        baseClasses += "bg-rose-500 text-white border-rose-600 shadow-sm";
+                    }
+                } else {
+                    baseClasses += "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200";
+                }
+
+                if (i === currentQuestion) {
+                    baseClasses += " ring-2 ring-blue-600 ring-offset-2 font-black scale-105";
+                }
+
+                btn.className = baseClasses;
+                btn.onclick = () => jumpToQuestion(i);
+                gridContainer.appendChild(btn);
+            }
+
+            document.getElementById("topic-progress-text").innerText = `${answeredCount} / ${totalInTopic} Dijawab`;
+            const pct = Math.round((answeredCount / totalInTopic) * 100);
+            document.getElementById("topic-progress-bar").style.width = `${pct}%`;
+        }
+
+        // Render Active Question
+        function renderActiveQuestion() {
+            const qData = quizData[currentTopic][currentQuestion];
+            const answerKey = `${currentTopic}_${currentQuestion}`;
+            const userAns = userAnswers[answerKey];
+
+            document.getElementById("question-number-badge").innerText = `Soal #${currentQuestion + 1}`;
+            document.getElementById("paper-tag").innerText = qData.paper;
+            document.getElementById("subtopic-name-header").innerText = topics[currentTopic].title;
+            document.getElementById("question-counter-footer").innerText = `Soal ${currentQuestion + 1} dari ${quizData[currentTopic].length}`;
+
+            document.getElementById("question-text").innerHTML = qData.q;
+
+            const optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = "";
+
+            const optionLabels = ["A", "B", "C", "D"];
+
+            qData.options.forEach((optText, optIdx) => {
+                const optBtn = document.createElement("button");
+                optBtn.type = "button";
+                
+                let optClasses = "w-full text-left p-4 rounded-xl border transition-all flex items-start gap-3 group text-sm sm:text-base ";
+
+                if (userAns !== undefined) {
+                    optBtn.disabled = true;
+
+                    if (optIdx === qData.correct) {
+                        optClasses += "bg-emerald-50 border-emerald-300 text-emerald-900 font-medium ring-1 ring-emerald-400";
+                    } else if (optIdx === userAns && userAns !== qData.correct) {
+                        optClasses += "bg-rose-50 border-rose-300 text-rose-900 font-medium ring-1 ring-rose-400";
+                    } else {
+                        optClasses += "bg-slate-50/50 border-slate-200 text-slate-400 opacity-60";
+                    }
+                } else {
+                    optClasses += "bg-white border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 text-slate-800 shadow-sm active:scale-[0.99]";
+                }
+
+                optBtn.className = optClasses;
+                
+                let badgeClass = "w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 mt-0.5 ";
+                if (userAns !== undefined) {
+                    if (optIdx === qData.correct) {
+                        badgeClass += "bg-emerald-600 text-white";
+                    } else if (optIdx === userAns) {
+                        badgeClass += "bg-rose-600 text-white";
+                    } else {
+                        badgeClass += "bg-slate-200 text-slate-500";
+                    }
+                } else {
+                    badgeClass += "bg-slate-100 text-slate-600 group-hover:bg-blue-600 group-hover:text-white transition";
+                }
+
+                optBtn.innerHTML = `
+                    <span class="${badgeClass}">${optionLabels[optIdx]}</span>
+                    <span class="flex-grow pt-0.5">${optText}</span>
+                `;
+
+                optBtn.onclick = () => handleSelectOption(optIdx);
+                optionsContainer.appendChild(optBtn);
+            });
+
+            // Instant Feedback
+            const feedbackBox = document.getElementById("feedback-box");
+            const feedbackTitle = document.getElementById("feedback-title");
+            const feedbackExp = document.getElementById("feedback-explanation");
+
+            if (userAns !== undefined) {
+                feedbackBox.classList.remove("hidden");
+                const isCorrect = userAns === qData.correct;
+
+                if (isCorrect) {
+                    feedbackBox.className = "p-4 sm:p-5 rounded-xl border bg-emerald-50 border-emerald-200 text-emerald-900 shadow-sm";
+                    feedbackTitle.innerHTML = `
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <span>Jawaban Anda Benar! (+1 Point)</span>
+                    `;
+                } else {
+                    feedbackBox.className = "p-4 sm:p-5 rounded-xl border bg-rose-50 border-rose-200 text-rose-900 shadow-sm";
+                    feedbackTitle.innerHTML = `
+                        <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        <span>Jawaban Kurang Tepat (Kunci: Opsi ${optionLabels[qData.correct]})</span>
+                    `;
+                }
+
+                feedbackExp.innerHTML = `<strong class="block mb-1 text-slate-800">💡 Pembahasan / Penjelasan:</strong> ${qData.exp}`;
+            } else {
+                feedbackBox.classList.add("hidden");
+            }
+
+            document.getElementById("prev-btn").disabled = (currentQuestion === 0);
+            document.getElementById("next-btn").disabled = (currentQuestion === quizData[currentTopic].length - 1);
+
+            renderQuestionGrid();
+            updateHeaderAndBadges();
+        }
+
+        function handleSelectOption(optionIndex) {
+            const key = `${currentTopic}_${currentQuestion}`;
+            if (userAnswers[key] !== undefined) return;
+
+            userAnswers[key] = optionIndex;
+            saveState();
+            renderActiveQuestion();
+        }
+
+        function navigateQuestion(direction) {
+            const max = quizData[currentTopic].length;
+            const newIndex = currentQuestion + direction;
+            if (newIndex >= 0 && newIndex < max) {
+                currentQuestion = newIndex;
+                saveState();
+                renderActiveQuestion();
+            }
+        }
+
+        function jumpToQuestion(index) {
+            currentQuestion = index;
+            saveState();
+            renderActiveQuestion();
+        }
+
+        function switchTab(tabIndex) {
+            currentTopic = tabIndex;
+
+            for (let i = 0; i <= 3; i++) {
+                const btn = document.getElementById(`tab-btn-${i}`);
+                if (i === tabIndex) {
+                    btn.className = "tab-button whitespace-nowrap px-4 py-2 rounded-lg text-sm font-semibold transition bg-white text-blue-900 shadow-md";
+                } else {
+                    btn.className = "tab-button whitespace-nowrap px-4 py-2 rounded-lg text-sm font-semibold transition text-blue-100 hover:bg-white/10";
+                }
+            }
+
+            if (tabIndex === 3) {
+                document.getElementById("quiz-view").classList.add("hidden");
+                document.getElementById("summary-view").classList.remove("hidden");
+                renderSummaryView();
+            } else {
+                document.getElementById("quiz-view").classList.remove("hidden");
+                document.getElementById("summary-view").classList.add("hidden");
+                document.getElementById("topic-title").innerText = topics[tabIndex].subtitle;
+                currentQuestion = 0;
+                saveState();
+                renderActiveQuestion();
+            }
+        }
+
+        function updateHeaderAndBadges() {
+            let grandTotalCorrect = 0;
+            let grandTotalAnswered = 0;
+            const grandTotalQuestions = 90;
+
+            for (let t = 0; t < 3; t++) {
+                let topicAnswered = 0;
+                for (let q = 0; q < 30; q++) {
+                    const ans = userAnswers[`${t}_${q}`];
+                    if (ans !== undefined) {
+                        grandTotalAnswered++;
+                        topicAnswered++;
+                        if (ans === quizData[t][q].correct) {
+                            grandTotalCorrect++;
+                        }
+                    }
+                }
+                document.getElementById(`badge-tab-${t}`).innerText = `${topicAnswered}/30`;
+            }
+
+            document.getElementById("header-score").innerText = `${grandTotalCorrect} / ${grandTotalQuestions}`;
+            const accuracy = grandTotalAnswered > 0 ? Math.round((grandTotalCorrect / grandTotalAnswered) * 100) : 0;
+            document.getElementById("header-accuracy").innerText = `${accuracy}%`;
+        }
+
+        function renderSummaryView() {
+            let totalCorrect = 0;
+            let totalAnswered = 0;
+            const topicStats = [];
+
+            for (let t = 0; t < 3; t++) {
+                let tCorrect = 0;
+                let tAnswered = 0;
+                for (let q = 0; q < 30; q++) {
+                    const ans = userAnswers[`${t}_${q}`];
+                    if (ans !== undefined) {
+                        tAnswered++;
+                        totalAnswered++;
+                        if (ans === quizData[t][q].correct) {
+                            tCorrect++;
+                            totalCorrect++;
+                        }
+                    }
+                }
+                topicStats.push({ title: topics[t].subtitle, correct: tCorrect, answered: tAnswered, total: 30 });
+            }
+
+            document.getElementById("summary-total-answered").innerText = `${totalAnswered} / 90`;
+            document.getElementById("summary-correct").innerText = totalCorrect;
+            document.getElementById("summary-incorrect").innerText = totalAnswered - totalCorrect;
+            
+            const overallAccuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+            document.getElementById("summary-score-percent").innerText = `${overallAccuracy}%`;
+
+            const breakdownContainer = document.getElementById("summary-topic-breakdown");
+            breakdownContainer.innerHTML = "";
+
+            topicStats.forEach((st) => {
+                const pct = st.answered > 0 ? Math.round((st.correct / st.answered) * 100) : 0;
+                const div = document.createElement("div");
+                div.className = "p-4 rounded-xl bg-slate-50 border border-slate-200";
+                div.innerHTML = `
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-1 mb-2">
+                        <span class="font-bold text-slate-800 text-sm">${st.title}</span>
+                        <span class="text-xs font-semibold text-slate-600">
+                            ${st.correct} Benar dari ${st.answered} Dijawab (Akurasi: ${pct}%)
+                        </span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+                        <div class="bg-blue-600 h-3 rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+                    </div>
+                `;
+                breakdownContainer.appendChild(div);
+            });
+        }
+
+        function openResetModal() {
+            document.getElementById("reset-modal").classList.remove("hidden");
+        }
+
+        function closeResetModal() {
+            document.getElementById("reset-modal").classList.add("hidden");
+        }
+
+        function confirmReset() {
+            userAnswers = {};
+            currentTopic = 0;
+            currentQuestion = 0;
+            localStorage.removeItem(STORAGE_KEY);
+            closeResetModal();
+            switchTab(0);
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            initQuestions();
+            loadSavedState();
+            switchTab(currentTopic);
+        });
+    </script>
+</body>
+</html>
