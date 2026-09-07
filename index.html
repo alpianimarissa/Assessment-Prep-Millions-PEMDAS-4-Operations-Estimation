@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 5 Interactive Math Quiz - Assessment Prep</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-700 via-indigo-700 to-sky-600 text-white shadow-lg sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-white/20 p-2.5 rounded-2xl backdrop-blur-sm">
+                    <svg class="w-8 h-8 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Grade 5 Math Quiz</h1>
+                    <p class="text-xs sm:text-sm text-blue-100">Assessment Prep: Millions, PEMDAS, 4 Operations & Estimation</p>
+                </div>
+            </div>
+
+            <!-- Score Summary Dashboard -->
+            <div class="flex items-center gap-3 bg-white/10 px-4 py-2 rounded-xl backdrop-blur-md border border-white/20">
+                <div class="text-center px-2">
+                    <span class="block text-xs text-blue-200">Total Score</span>
+                    <span id="header-score" class="text-lg font-extrabold text-yellow-300">0 / 90</span>
+                </div>
+                <div class="h-8 w-px bg-white/20"></div>
+                <div class="text-center px-2">
+                    <span class="block text-xs text-blue-200">Accuracy</span>
+                    <span id="header-accuracy" class="text-lg font-extrabold text-emerald-300">0%</span>
+                </div>
+                <button onclick="openResetModal()" title="Reset All Progress" class="ml-2 bg-red-500/80 hover:bg-red-600 text-white p-2 rounded-lg transition text-xs flex items-center gap-1 shadow">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    <span class="hidden sm:inline">Reset</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Sub-Topic Navigation Tabs -->
+        <div class="bg-blue-900/40 border-t border-white/10 backdrop-blur-md">
+            <div class="max-w-7xl mx-auto px-4 flex overflow-x-auto space-x-2 py-2 custom-scrollbar">
+                <button onclick="switchTab(0)" id="tab-btn-0" class="tab-button whitespace-nowrap px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2">
+                    <span>1. Numbers to Millions</span>
+                    <span id="badge-tab-0" class="bg-white/20 text-xs px-2 py-0.5 rounded-full">0/30</span>
+                </button>
+                <button onclick="switchTab(1)" id="tab-btn-1" class="tab-button whitespace-nowrap px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2">
+                    <span>2. PEMDAS</span>
+                    <span id="badge-tab-1" class="bg-white/20 text-xs px-2 py-0.5 rounded-full">0/30</span>
+                </button>
+                <button onclick="switchTab(2)" id="tab-btn-2" class="tab-button whitespace-nowrap px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2">
+                    <span>3. Operations & Estimation</span>
+                    <span id="badge-tab-2" class="bg-white/20 text-xs px-2 py-0.5 rounded-full">0/30</span>
+                </button>
+                <button onclick="switchTab(3)" id="tab-btn-3" class="tab-button whitespace-nowrap px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2">
+                    <span>📊 Results Summary</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+        
+        <!-- Offline / Auto-save notification banner -->
+        <div id="save-indicator" class="mb-4 bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 rounded-xl text-xs sm:text-sm flex items-center justify-between shadow-sm">
+            <div class="flex items-center gap-2">
+                <span class="relative flex h-2.5 w-2.5">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                <span>Progress is automatically saved in your browser. Safe from power outage or page reloads.</span>
+            </div>
+            <span class="font-mono text-emerald-600 font-semibold" id="last-saved-time">Saved</span>
+        </div>
+
+        <!-- TAB CONTENT 0, 1, 2 (Topics) -->
+        <div id="quiz-view" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            
+            <!-- Left Grid: Question Navigator Sidebar -->
+            <div class="lg:col-span-1 bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col gap-4">
+                <div>
+                    <h2 id="topic-title" class="font-bold text-slate-800 text-base">Math Topic</h2>
+                    <p class="text-xs text-slate-500 mt-0.5">Select a question number to jump directly:</p>
+                </div>
+
+                <!-- Topic Progress Bar -->
+                <div>
+                    <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+                        <span>Sub-Topic Progress</span>
+                        <span id="topic-progress-text">0 / 30 Answered</span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                        <div id="topic-progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Question Grid Navigation Buttons -->
+                <div id="question-grid" class="grid grid-cols-5 gap-2 max-h-[360px] overflow-y-auto custom-scrollbar p-1">
+                    <!-- Dynamic Question Buttons 1 to 30 -->
+                </div>
+
+                <!-- Status Legend -->
+                <div class="pt-3 border-t border-slate-100 grid grid-cols-3 gap-2 text-[11px] text-slate-600">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded bg-slate-200 border border-slate-300"></span>
+                        <span>Unanswered</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded bg-emerald-500 text-white"></span>
+                        <span>Correct</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-3 h-3 rounded bg-rose-500 text-white"></span>
+                        <span>Incorrect</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Active Question Display -->
+            <div class="lg:col-span-3 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                <div>
+                    <!-- Question Header Info -->
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100 gap-2">
+                        <div class="flex items-center gap-2">
+                            <span id="question-number-badge" class="bg-blue-100 text-blue-800 font-bold px-3 py-1 rounded-lg text-sm">
+                                Question #1
+                            </span>
+                            <span id="paper-tag" class="bg-amber-100 text-amber-800 text-xs font-semibold px-2.5 py-1 rounded-md">
+                                Paper 1 (Fluency)
+                            </span>
+                        </div>
+                        <span id="subtopic-name-header" class="text-xs font-semibold text-slate-400">Sub-Topic 1</span>
+                    </div>
+
+                    <!-- Question Text -->
+                    <div class="my-6">
+                        <div id="question-text" class="text-base sm:text-lg text-slate-800 font-medium leading-relaxed">
+                            Loading question...
+                        </div>
+                    </div>
+
+                    <!-- Answer Options -->
+                    <div id="options-container" class="space-y-3 my-6">
+                        <!-- Dynamic Options A, B, C, D -->
+                    </div>
+
+                    <!-- Instant Feedback & Pembahasan Box -->
+                    <div id="feedback-box" class="hidden p-4 sm:p-5 rounded-xl border transition-all duration-300 my-4">
+                        <div class="flex items-center gap-2 font-bold text-sm sm:text-base mb-1" id="feedback-title">
+                            <!-- Correct/Incorrect Title -->
+                        </div>
+                        <div id="feedback-explanation" class="text-xs sm:text-sm text-slate-700 leading-relaxed mt-1">
+                            <!-- Explanation -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Navigation Buttons -->
+                <div class="pt-6 border-t border-slate-100 flex justify-between items-center gap-3">
+                    <button id="prev-btn" onclick="navigateQuestion(-1)" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition text-sm flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        Previous
+                    </button>
+                    <div class="text-xs font-medium text-slate-400 hidden sm:block" id="question-counter-footer">
+                        Question 1 of 30
+                    </div>
+                    <button id="next-btn" onclick="navigateQuestion(1)" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition text-sm flex items-center gap-2 shadow-md hover:shadow-lg">
+                        Next
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT 3: Summary & Analytics View -->
+        <div id="summary-view" class="hidden space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">📊 Quiz Results Summary</h2>
+                <p class="text-sm text-slate-600 mb-6">Here is your performance evaluation across the 3 assessment sub-topics:</p>
+
+                <!-- Overall Stats Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="p-5 bg-blue-50 border border-blue-100 rounded-xl">
+                        <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider block mb-1">Total Answered</span>
+                        <span id="summary-total-answered" class="text-2xl sm:text-3xl font-extrabold text-blue-900">0 / 90</span>
+                    </div>
+                    <div class="p-5 bg-emerald-50 border border-emerald-100 rounded-xl">
+                        <span class="text-xs font-semibold text-emerald-600 uppercase tracking-wider block mb-1">Correct Answers</span>
+                        <span id="summary-correct" class="text-2xl sm:text-3xl font-extrabold text-emerald-900">0</span>
+                    </div>
+                    <div class="p-5 bg-rose-50 border border-rose-100 rounded-xl">
+                        <span class="text-xs font-semibold text-rose-600 uppercase tracking-wider block mb-1">Incorrect Answers</span>
+                        <span id="summary-incorrect" class="text-2xl sm:text-3xl font-extrabold text-rose-900">0</span>
+                    </div>
+                    <div class="p-5 bg-amber-50 border border-amber-100 rounded-xl">
+                        <span class="text-xs font-semibold text-amber-600 uppercase tracking-wider block mb-1">Accuracy Score</span>
+                        <span id="summary-score-percent" class="text-2xl sm:text-3xl font-extrabold text-amber-900">0%</span>
+                    </div>
+                </div>
+
+                <!-- Breakdown by Topic -->
+                <h3 class="font-bold text-slate-800 text-lg mb-4">Breakdown by Sub-Topic</h3>
+                <div class="space-y-4" id="summary-topic-breakdown">
+                    <!-- Dynamic Breakdown Bars -->
+                </div>
+
+                <!-- Action buttons -->
+                <div class="mt-8 pt-6 border-t border-slate-100 flex flex-wrap gap-4">
+                    <button onclick="switchTab(0)" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-sm transition">
+                        Back to Quiz Practice
+                    </button>
+                    <button onclick="openResetModal()" class="px-5 py-2.5 bg-rose-100 hover:bg-rose-200 text-rose-700 font-semibold rounded-xl text-sm transition">
+                        Reset & Restart Quiz
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Custom Modal Confirmation for Reset -->
+    <div id="reset-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
+            <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mb-4 mx-auto">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 text-center mb-2">Reset All Quiz Progress?</h3>
+            <p class="text-xs sm:text-sm text-slate-600 text-center mb-6">
+                This action will delete all your saved answers and reset your score to 0.
+            </p>
+            <div class="flex gap-3">
+                <button onclick="closeResetModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition">
+                    Cancel
+                </button>
+                <button onclick="confirmReset()" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-xl text-sm transition shadow-md">
+                    Yes, Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500">
+        <p>Grade 5 Elementary Math Quiz App • Curriculum-Aligned Assessment Content</p>
+    </footer>
+
+    <!-- JavaScript Quiz Engine & Complete English Question Bank (90 Questions) -->
+    <script>
+        const topics = [
+            {
+                id: "numbers",
+                title: "1. Read, Write, Compare & Order Numbers up to Millions",
+                subtitle: "Sub-Topic 1: Read, Write, Compare & Order Numbers up to Millions"
+            },
+            {
+                id: "pemdas",
+                title: "2. PEMDAS (Order of Operations)",
+                subtitle: "Sub-Topic 2: PEMDAS / Order of Mixed Operations"
+            },
+            {
+                id: "operations_estimation",
+                title: "3. Four Math Operations & Estimation",
+                subtitle: "Sub-Topic 3: Four Math Operations & Result Estimation"
+            }
+        ];
+
+        // Raw Question Sets in English (3 Subtopics x 30 Questions = 90 Questions)
+        const rawQuestions = {
+            // TOPIC 0: Numbers up to Millions (30 Questions)
+            0: [
+                { q: "The numeral for 'Two million four hundred fifty thousand eight hundred' is...", options: ["2,450,800", "2,045,800", "2,405,800", "2,540,800"], correct: 0, exp: "Two million (2,000,000) + four hundred fifty thousand (450,000) + eight hundred (800) = 2,450,800.", paper: "Paper 1" },
+                { q: "In the number 5,832,190, the place value of the digit 8 is...", options: ["Ten thousands", "Hundred thousands", "Millions", "Hundreds"], correct: 1, exp: "The digit 8 is in the hundred thousands position, representing 800,000.", paper: "Paper 1" },
+                { q: "Which inequality symbol correctly completes: 3,725,100 ... 3,752,100?", options: [">", "<", "=", "≥"], correct: 1, exp: "3,725,100 is less than 3,752,100 because the ten-thousands digit 2 < 5.", paper: "Paper 1" },
+                { q: "Order these numbers from SMALLEST to LARGEST: 4,120,000; 4,021,000; 4,201,000; 4,102,000.", options: ["4,021,000; 4,102,000; 4,120,000; 4,201,000", "4,102,000; 4,021,000; 4,120,000; 4,201,000", "4,021,000; 4,120,000; 4,102,000; 4,201,000", "4,201,000; 4,120,000; 4,102,000; 4,021,000"], correct: 0, exp: "Ordering from smallest to largest value gives: 4,021,000 < 4,102,000 < 4,120,000 < 4,201,000.", paper: "Paper 1" },
+                { q: "City A has a population of 1,250,000, while City B has 1,520,000 residents. Which statement is TRUE?", options: ["City A has more residents than City B", "City B has more residents than City A", "City A and City B have equal population", "The population difference is 300,000"], correct: 1, exp: "1,520,000 > 1,250,000, so City B has a larger population than City A.", paper: "Paper 2" },
+                { q: "What is the expanded form of 6,049,300?", options: ["6,000,000 + 400,000 + 9,000 + 300", "6,000,000 + 40,000 + 9,000 + 300", "6,000,000 + 4,000 + 900 + 300", "600,000 + 40,000 + 9,000 + 300"], correct: 1, exp: "6,049,300 = 6,000,000 + 0 + 40,000 + 9,000 + 300 + 0 + 0.", paper: "Paper 1" },
+                { q: "The digit 7 in the number 7,912,450 represents a value of...", options: ["700,000", "70,000", "7,000,000", "70,000,000"], correct: 2, exp: "The digit 7 is in the millions place, so its value is 7,000,000.", paper: "Paper 1" },
+                { q: "A publishing house printed 8,500,000 copies of a textbook. How is this number written in words?", options: ["Eight million five hundred thousand", "Eight million fifty thousand", "Eighty-five thousand", "Eight million five hundred"], correct: 0, exp: "8,500,000 is written in words as 'Eight million five hundred thousand'.", paper: "Paper 1" },
+                { q: "Which of the following numbers is CLOSEST to 5,000,000?", options: ["4,999,900", "5,000,200", "4,990,000", "5,010,000"], correct: 0, exp: "The difference between 4,999,900 and 5,000,000 is only 100, which is the smallest difference.", paper: "Paper 1" },
+                { q: "Which number is GREATER than 6,840,000?", options: ["6,839,999", "6,840,001", "6,804,999", "6,799,999"], correct: 1, exp: "6,840,001 is greater by 1 compared to 6,840,000.", paper: "Paper 1" },
+                { q: "A digital library has 3,008,050 articles. How is this number read?", options: ["Three million eight thousand fifty", "Three million eighty thousand fifty", "Three million eight hundred thousand fifty", "Three million eight thousand five hundred"], correct: 0, exp: "3,008,050 is read as 'Three million eight thousand fifty'.", paper: "Paper 1" },
+                { q: "What is the place value of the bold digit 0 in 1,2<b>0</b>5,600?", options: ["Hundreds", "Ten thousands", "Hundred thousands", "Millions"], correct: 1, exp: "The bold digit 0 is in the ten thousands place.", paper: "Paper 1" },
+                { q: "If 100,000 is added to 4,560,000, the sum is...", options: ["4,660,000", "5,560,000", "4,570,000", "4,650,000"], correct: 0, exp: "4,560,000 + 100,000 = 4,660,000.", paper: "Paper 1" },
+                { q: "The government distributed 2,750,000 tree seedlings to Region X and 2,705,000 seedlings to Region Y. Which statement is correct?", options: ["Region X received fewer seedlings", "Region X received more seedlings", "Both regions received equal seedlings", "Region Y received 50,000 more seedlings"], correct: 1, exp: "2,750,000 > 2,705,000, so Region X received more seedlings.", paper: "Paper 2" },
+                { q: "What is the difference between the values of digit 9 and digit 3 in 9,430,000?", options: ["9,000,000 - 30,000 = 8,970,000", "900,000 - 30,000 = 870,000", "9,000,000 - 300,000 = 8,700,000", "90,000 - 3,000 = 87,000"], correct: 0, exp: "Digit 9 equals 9,000,000 and digit 3 equals 30,000. Difference = 8,970,000.", paper: "Paper 1" },
+                { q: "Arrange from LARGEST to SMALLEST: 7,800,000; 7,080,000; 7,880,000; 7,008,000.", options: ["7,880,000; 7,800,000; 7,080,000; 7,008,000", "7,880,000; 7,080,000; 7,800,000; 7,008,000", "7,008,000; 7,080,000; 7,800,000; 7,880,000", "7,800,000; 7,880,000; 7,080,000; 7,008,000"], correct: 0, exp: "Descending order: 7,880,000 > 7,800,000 > 7,080,000 > 7,008,000.", paper: "Paper 1" },
+                { q: "Adding 1 to 9,999,999 results in...", options: ["10,000,000 (Ten million)", "1,000,000 (One million)", "100,000,000 (One hundred million)", "99,999,100"], correct: 0, exp: "9,999,999 + 1 = 10,000,000 (Ten million).", paper: "Paper 1" },
+                { q: "In the number 5,555,555, the digit 5 representing a value of 500,000 is located in which place value?", options: ["Hundred thousands", "Ten thousands", "Millions", "Hundreds"], correct: 0, exp: "The value 500,000 indicates the hundred thousands position.", paper: "Paper 1" },
+                { q: "Write in standard numeric form: 'Five million nine hundred thousand seventy'.", options: ["5,900,070", "5,090,070", "5,900,700", "5,970,000"], correct: 0, exp: "5,000,000 + 900,000 + 70 = 5,900,070.", paper: "Paper 1" },
+                { q: "Which of the following number pairs satisfies the relationship B > A?", options: ["A = 1,450,000, B = 1,540,000", "A = 2,300,000, B = 2,030,000", "A = 3,600,000, B = 3,600,000", "A = 4,100,000, B = 4,099,000"], correct: 0, exp: "For A = 1,450,000 and B = 1,540,000, B is clearly greater than A.", paper: "Paper 1" },
+                { q: "District A is 1,050,000 cm away, and District B is 1,500,000 cm away. Which district is further away?", options: ["District B", "District A", "Both districts are equal distance", "Cannot be determined"], correct: 0, exp: "1,500,000 cm > 1,050,000 cm, so District B is further.", paper: "Paper 2" },
+                { q: "Round 3,425,000 to the nearest hundred thousand:", options: ["3,400,000", "3,500,000", "3,000,000", "3,430,000"], correct: 0, exp: "The ten-thousands digit is 2 (< 5), so round down to 3,400,000.", paper: "Paper 1" },
+                { q: "Which number has the digit 4 in the ten thousands place value?", options: ["2,145,600", "2,415,600", "4,215,600", "2,154,600"], correct: 0, exp: "In 2,145,600, digit 4 is in the ten thousands place (40,000).", paper: "Paper 1" },
+                { q: "Which statement is TRUE regarding 8,210,000 and 8,120,000?", options: ["8,210,000 > 8,120,000", "8,210,000 < 8,120,000", "8,210,000 = 8,120,000", "8,120,000 is greater than 8,210,000"], correct: 0, exp: "8,210,000 > 8,120,000 because hundred-thousands digit 2 > 1.", paper: "Paper 1" },
+                { q: "A social media channel reached 4,005,000 followers. How is this written in words?", options: ["Four million five thousand", "Four million five hundred thousand", "Four million fifty thousand", "Four hundred five thousand"], correct: 0, exp: "4,005,000 is written as 'Four million five thousand'.", paper: "Paper 1" },
+                { q: "Calculate: 3,000,000 + 400,000 + 5,000 + 20 = ...", options: ["3,405,020", "3,450,020", "3,045,020", "3,405,200"], correct: 0, exp: "3,000,000 + 400,000 + 5,000 + 20 = 3,405,020.", paper: "Paper 1" },
+                { q: "Concert ticket sales: Event A = 1,800,000, Event B = 1,850,000, Event C = 1,790,000. Order from MOST to LEAST tickets sold:", options: ["B, A, C", "A, B, C", "C, A, B", "B, C, A"], correct: 0, exp: "1,850,000 (B) > 1,800,000 (A) > 1,790,000 (C).", paper: "Paper 2" },
+                { q: "The digit 2 in 6,271,000 represents a value of...", options: ["200,000", "20,000", "2,000,000", "2,000"], correct: 0, exp: "The digit 2 is in the hundred thousands place, so its value is 200,000.", paper: "Paper 1" },
+                { q: "Among the following numbers, which one has the SMALLEST value?", options: ["1,009,999", "1,090,000", "1,000,999", "1,009,090"], correct: 2, exp: "1,000,999 is smallest because both hundred-thousands and thousands digits are 0.", paper: "Paper 1" },
+                { q: "A number consists of 5 millions + 9 hundred thousands + 3 tens + 8 ones. The number is...", options: ["5,900,038", "5,903,008", "5,090,038", "5,930,008"], correct: 0, exp: "5,000,000 + 900,000 + 30 + 8 = 5,900,038.", paper: "Paper 1" }
+            ],
+
+            // TOPIC 1: PEMDAS (30 Questions)
+            1: [
+                { q: "What is the result of 12 + 8 × 5?", options: ["52", "100", "60", "96"], correct: 0, exp: "Perform multiplication first: 8 × 5 = 40. Then 12 + 40 = 52.", paper: "Paper 1" },
+                { q: "What is the value of (15 + 25) ÷ 5?", options: ["8", "20", "10", "12"], correct: 0, exp: "Evaluate parentheses first: 15 + 25 = 40. Then 40 ÷ 5 = 8.", paper: "Paper 1" },
+                { q: "Calculate: 50 - 18 ÷ 3 + 4 = ...", options: ["48", "14", "32", "20"], correct: 0, exp: "Division first: 18 ÷ 3 = 6. Then 50 - 6 + 4 = 44 + 4 = 48.", paper: "Paper 1" },
+                { q: "Find the value of 6 × 4 + 18 ÷ 2:", options: ["33", "21", "42", "27"], correct: 0, exp: "Multiplication & division first: (6×4) = 24 and (18÷2) = 9. Then 24 + 9 = 33.", paper: "Paper 1" },
+                { q: "Calculate: 100 - (20 + 5 × 4) = ...", options: ["60", "360", "80", "40"], correct: 0, exp: "Inside parentheses: 5 × 4 = 20, then 20 + 20 = 40. Finally 100 - 40 = 60.", paper: "Paper 1" },
+                { q: "Andy bought 3 bags of marbles. Each bag contains 10 marbles. He gave 8 marbles to his brother. Which mathematical expression and answer are correct?", options: ["3 × 10 - 8 = 22", "3 + 10 - 8 = 5", "(3 + 10) × 8 = 104", "3 × (10 - 8) = 6"], correct: 0, exp: "Total marbles = 3 × 10 = 30. Subtract 8 gave away = 22 marbles.", paper: "Paper 2" },
+                { q: "Evaluate: 45 ÷ (9 - 4) + 7 = ...", options: ["16", "2", "12", "20"], correct: 0, exp: "Parentheses first: 9 - 4 = 5. Then 45 ÷ 5 = 9. Finally 9 + 7 = 16.", paper: "Paper 1" },
+                { q: "What is the result of 24 + 16 ÷ 4 × 2?", options: ["32", "20", "10", "40"], correct: 0, exp: "Division and multiplication left to right: 16 ÷ 4 = 4, then 4 × 2 = 8. Finally 24 + 8 = 32.", paper: "Paper 1" },
+                { q: "Which expression equals 25?", options: ["(10 + 15) × 1", "10 + 15 × 2", "50 - 10 ÷ 2", "(30 - 10) + 10"], correct: 0, exp: "(10 + 15) × 1 = 25 × 1 = 25.", paper: "Paper 1" },
+                { q: "What is the value of 80 - 5 × (6 + 4)?", options: ["30", "750", "70", "50"], correct: 0, exp: "Parentheses: 6 + 4 = 10. Multiplication: 5 × 10 = 50. Subtraction: 80 - 50 = 30.", paper: "Paper 1" },
+                { q: "Evaluate: 36 ÷ 6 × 3 = ...", options: ["18", "2", "6", "12"], correct: 0, exp: "Multiplication and division have equal priority, work from left to right: 36 ÷ 6 = 6, then 6 × 3 = 18.", paper: "Paper 1" },
+                { q: "Mr. Budi brought 5 boxes of apples, each with 12 apples. He distributed 15 apples to neighbours. How many apples are left?", options: ["45 apples", "51 apples", "35 apples", "60 apples"], correct: 0, exp: "Expression: 5 × 12 - 15 = 60 - 15 = 45 apples.", paper: "Paper 2" },
+                { q: "What is the result of 7 + 3 × (10 - 2) ÷ 4?", options: ["13", "20", "10", "15"], correct: 0, exp: "Parentheses: 10 - 2 = 8. Next 3 × 8 ÷ 4 = 24 ÷ 4 = 6. Finally 7 + 6 = 13.", paper: "Paper 1" },
+                { q: "Find the value of (50 - 20) ÷ (2 + 3):", options: ["6", "10", "15", "5"], correct: 0, exp: "First set: 50 - 20 = 30. Second set: 2 + 3 = 5. Division: 30 ÷ 5 = 6.", paper: "Paper 1" },
+                { q: "Calculate: 18 + 12 ÷ 3 - 2 × 3 = ...", options: ["16", "24", "14", "18"], correct: 0, exp: "Division & multiplication first: 12 ÷ 3 = 4, and 2 × 3 = 6. Then 18 + 4 - 6 = 16.", paper: "Paper 1" },
+                { q: "A store has 4 boxes of pencils with 12 pencils each. The owner receives 10 extra pencils. How many pencils in total?", options: ["58 pencils", "96 pencils", "48 pencils", "68 pencils"], correct: 0, exp: "Expression: 4 × 12 + 10 = 48 + 10 = 58 pencils.", paper: "Paper 2" },
+                { q: "What is 100 ÷ 5 - 2 × 8?", options: ["4", "144", "16", "8"], correct: 0, exp: "100 ÷ 5 = 20. 2 × 8 = 16. Subtraction: 20 - 16 = 4.", paper: "Paper 1" },
+                { q: "Calculate: 15 × (8 - 3) + 25 = ...", options: ["100", "75", "120", "90"], correct: 0, exp: "8 - 3 = 5. Multiplication: 15 × 5 = 75. Addition: 75 + 25 = 100.", paper: "Paper 1" },
+                { q: "If A = 20, B = 5, C = 2, what is the value of A - B × C?", options: ["10", "30", "15", "25"], correct: 0, exp: "A - B × C = 20 - (5 × 2) = 20 - 10 = 10.", paper: "Paper 1" },
+                { q: "Which math expression yields the LARGEST value?", options: ["(10 + 5) × 4", "10 + 5 × 4", "10 × 5 + 4", "10 × (5 - 4)"], correct: 0, exp: "(10+5)×4 = 60. Other options: 10+20=30; 50+4=54; 10×1=10.", paper: "Paper 1" },
+                { q: "What is the result of 42 ÷ 7 + 5 × 6?", options: ["36", "66", "48", "30"], correct: 0, exp: "42 ÷ 7 = 6 and 5 × 6 = 30. Then 6 + 30 = 36.", paper: "Paper 1" },
+                { q: "Santi has 50 candies. She eats 5 candies and splits the rest equally among 5 friends. How many candies does each friend get?", options: ["9 candies", "10 candies", "8 candies", "5 candies"], correct: 0, exp: "Mathematical sentence: (50 - 5) ÷ 5 = 45 ÷ 5 = 9 candies.", paper: "Paper 2" },
+                { q: "Calculate: 64 ÷ (16 - 8) × 3 = ...", options: ["24", "8", "16", "32"], correct: 0, exp: "Parentheses: 16 - 8 = 8. Division: 64 ÷ 8 = 8. Multiplication: 8 × 3 = 24.", paper: "Paper 1" },
+                { q: "Evaluate: (12 + 18) ÷ 6 + 4 × 5 = ...", options: ["25", "30", "18", "20"], correct: 0, exp: "(12+18) = 30. 30 ÷ 6 = 5. 4 × 5 = 20. Result: 5 + 20 = 25.", paper: "Paper 1" },
+                { q: "What is the result of 90 - 40 ÷ 5 × 2?", options: ["74", "20", "84", "70"], correct: 0, exp: "40 ÷ 5 = 8, then 8 × 2 = 16. Finally 90 - 16 = 74.", paper: "Paper 1" },
+                { q: "A bus carries 30 passengers. At stop A, 8 people step off and 12 people step on. How many passengers are on the bus now?", options: ["34 passengers", "26 passengers", "38 passengers", "40 passengers"], correct: 0, exp: "30 - 8 + 12 = 22 + 12 = 34 passengers.", paper: "Paper 2" },
+                { q: "Evaluate: 5 × (12 + 8) ÷ 10 = ...", options: ["10", "12", "15", "8"], correct: 0, exp: "12 + 8 = 20. Multiplication: 5 × 20 = 100. Division: 100 ÷ 10 = 10.", paper: "Paper 1" },
+                { q: "Calculate: 75 - (25 + 15) ÷ 8 = ...", options: ["70", "5", "65", "60"], correct: 0, exp: "25 + 15 = 40. Division: 40 ÷ 8 = 5. Subtraction: 75 - 5 = 70.", paper: "Paper 1" },
+                { q: "What is 14 + 6 × 2 - 10 ÷ 2?", options: ["21", "15", "19", "25"], correct: 0, exp: "Multiplication: 6 × 2 = 12. Division: 10 ÷ 2 = 5. Evaluate: 14 + 12 - 5 = 21.", paper: "Paper 1" },
+                { q: "A merchant has 8 sacks of rice weighing 25 kg each. He sells 120 kg. How much rice remains?", options: ["80 kg", "100 kg", "60 kg", "90 kg"], correct: 0, exp: "Expression: 8 × 25 - 120 = 200 - 120 = 80 kg.", paper: "Paper 2" }
+            ],
+
+            // TOPIC 2: Four Operations & Estimation (30 Questions)
+            2: [
+                { q: "What is the best estimation for 495 + 308 by rounding each number to the nearest hundred?", options: ["800", "700", "850", "900"], correct: 0, exp: "495 rounds to 500. 308 rounds to 300. 500 + 300 = 800.", paper: "Paper 1" },
+                { q: "What is the exact product of 1,250 × 4?", options: ["5,000", "4,800", "5,200", "6,000"], correct: 0, exp: "1,250 × 4 = 5,000.", paper: "Paper 1" },
+                { q: "Estimate the product of 58 × 22 by rounding to the nearest ten:", options: ["1,200", "1,000", "1,400", "1,500"], correct: 0, exp: "58 rounds to 60. 22 rounds to 20. 60 × 20 = 1,200.", paper: "Paper 1" },
+                { q: "A farmer harvested 4,820 kg of palm oil on day 1 and 3,190 kg on day 2. Estimate the total harvest to the nearest thousand:", options: ["8,000 kg", "7,000 kg", "9,000 kg", "8,500 kg"], correct: 0, exp: "4,820 rounds to 5,000. 3,190 rounds to 3,000. Total estimate = 5,000 + 3,000 = 8,000 kg.", paper: "Paper 2" },
+                { q: "What is the quotient of 8,400 ÷ 20?", options: ["420", "42", "4,200", "400"], correct: 0, exp: "8,400 ÷ 20 = 420.", paper: "Paper 1" },
+                { q: "Is estimating 2,900 - 1,150 ≈ 1,800 reasonable when rounding numbers to the nearest hundred?", options: ["Yes, because 2,900 - 1,100 = 1,800", "No, it should be 2,000", "Yes, because 3,000 - 1,000 = 2,000", "No, exact answer is 1,500"], correct: 0, exp: "2,900 stays 2,900, 1,150 rounds to 1,100. 2,900 - 1,100 = 1,800 is a valid estimate.", paper: "Paper 1" },
+                { q: "Calculate the exact sum of 345,000 + 255,000:", options: ["600,000", "500,000", "650,000", "550,000"], correct: 0, exp: "345,000 + 255,000 = 600,000.", paper: "Paper 1" },
+                { q: "A factory produces 15,000 units in 30 days. What is the average daily production?", options: ["500 units", "50 units", "1,500 units", "450 units"], correct: 0, exp: "15,000 ÷ 30 = 500 units per day.", paper: "Paper 2" },
+                { q: "Estimate 7,820 ÷ 39 by rounding to compatible numbers:", options: ["200", "20", "2,000", "150"], correct: 0, exp: "7,820 rounds to 8,000, 39 rounds to 40. 8,000 ÷ 40 = 200.", paper: "Paper 1" },
+                { q: "What is 1,000,000 - 435,000?", options: ["565,000", "575,000", "665,000", "535,000"], correct: 0, exp: "1,000,000 - 435,000 = 565,000.", paper: "Paper 1" },
+                { q: "A mother bought 4 shirts at $98 each. About how much did she spend in total?", options: ["$400", "$300", "$500", "$350"], correct: 0, exp: "$98 rounds to $100. 4 × $100 = $400.", paper: "Paper 2" },
+                { q: "Calculate: 350 × 40 = ...", options: ["14,000", "1,400", "140,000", "12,000"], correct: 0, exp: "35 × 4 = 140, add two zeros = 14,000.", paper: "Paper 1" },
+                { q: "What is 750,000 ÷ 25?", options: ["30,000", "3,000", "300,000", "25,000"], correct: 0, exp: "75 ÷ 25 = 3, append 4 zeros = 30,000.", paper: "Paper 1" },
+                { q: "Warehouse A holds 124,500 kg of rice, Warehouse B holds 85,500 kg. What is the total combined rice?", options: ["210,000 kg", "200,000 kg", "220,000 kg", "215,000 kg"], correct: 0, exp: "124,500 + 85,500 = 210,000 kg.", paper: "Paper 2" },
+                { q: "Estimate the product of 91 × 48:", options: ["4,500", "3,600", "5,000", "4,000"], correct: 0, exp: "91 rounds to 90, 48 rounds to 50. 90 × 50 = 4,500.", paper: "Paper 1" },
+                { q: "Calculate: 500,000 - 182,500 - 117,500 = ...", options: ["200,000", "300,000", "250,000", "150,000"], correct: 0, exp: "182,500 + 117,500 = 300,000. Then 500,000 - 300,000 = 200,000.", paper: "Paper 1" },
+                { q: "A merchant buys 12 fruit crates at $49.50 per crate. Which is the most reasonable estimated total cost?", options: ["$600", "$500", "$400", "$700"], correct: 0, exp: "$49.50 rounds to $50. 12 × $50 = $600.", paper: "Paper 2" },
+                { q: "Calculate: 125 × 8 × 10 = ...", options: ["10,000", "1,000", "100,000", "8,000"], correct: 0, exp: "125 × 8 = 1,000. Then 1,000 × 10 = 10,000.", paper: "Paper 1" },
+                { q: "If 1,500,000 is divided by 300, the quotient is...", options: ["5,000", "500", "50,000", "50"], correct: 0, exp: "1,500,000 ÷ 300 = 5,000.", paper: "Paper 1" },
+                { q: "An event requires 2,950 chairs. If organizers rent 3,000 chairs, is this estimate sufficient?", options: ["Yes, because 3,000 > 2,950", "No, it falls short by 50 chairs", "Cannot be determined", "Not enough chairs"], correct: 0, exp: "3,000 > 2,950, so the estimate is sufficient and safe.", paper: "Paper 2" },
+                { q: "Calculate the sum: 4,320 + 2,680 + 1,000 = ...", options: ["8,000", "7,000", "8,500", "7,500"], correct: 0, exp: "4,320 + 2,680 = 7,000, plus 1,000 = 8,000.", paper: "Paper 1" },
+                { q: "Estimate 615 - 289 to the nearest hundred:", options: ["300", "400", "200", "350"], correct: 0, exp: "615 rounds to 600, 289 rounds to 300. 600 - 300 = 300.", paper: "Paper 1" },
+                { q: "Calculate: 250,000 + (75,000 × 2) = ...", options: ["400,000", "650,000", "350,000", "500,000"], correct: 0, exp: "75,000 × 2 = 150,000. Then 250,000 + 150,000 = 400,000.", paper: "Paper 1" },
+                { q: "Mr. Roni earns $3,600 per month. How much does he earn in 6 months (1 semester)?", options: ["$21,600", "$18,000", "$24,000", "$21,000"], correct: 0, exp: "3,600 × 6 = 21,600.", paper: "Paper 2" },
+                { q: "Best estimate of 1,890 ÷ 21 using compatible numbers:", options: ["90", "100", "80", "95"], correct: 0, exp: "1,890 rounds to 1,800, 21 rounds to 20. 1,800 ÷ 20 = 90.", paper: "Paper 1" },
+                { q: "Calculate: 600 × 500 = ...", options: ["300,000", "30,000", "3,000,000", "30,000"], correct: 0, exp: "6 × 5 = 30, add 4 zeros = 300,000.", paper: "Paper 1" },
+                { q: "A water reservoir holds 850,000 liters. 275,000 liters are used for plants and 325,000 liters for town consumption. How much water remains?", options: ["250,000 liters", "300,000 liters", "200,000 liters", "150,000 liters"], correct: 0, exp: "Total used = 275,000 + 325,000 = 600,000 liters. Remaining = 850,000 - 600,000 = 250,000 liters.", paper: "Paper 2" },
+                { q: "What is 450,000 ÷ 90?", options: ["5,000", "500", "50,000", "45,000"], correct: 0, exp: "450,000 ÷ 90 = 5,000.", paper: "Paper 1" },
+                { q: "Estimate total exhibition visitors on Saturday (4,920) and Sunday (6,110) to nearest thousand:", options: ["11,000 visitors", "10,000 visitors", "12,000 visitors", "11,500 visitors"], correct: 0, exp: "4,920 rounds to 5,000. 6,110 rounds to 6,000. 5,000 + 6,000 = 11,000 visitors.", paper: "Paper 2" },
+                { q: "Calculate: (800,000 - 350,000) ÷ 5 = ...", options: ["90,000", "80,000", "100,000", "95,000"], correct: 0, exp: "800,000 - 350,000 = 450,000. Then 450,000 ÷ 5 = 90,000.", paper: "Paper 1" }
+            ]
+        };
+
+        // App state
+        let quizData = [];
+        let userAnswers = {};
+        let currentTopic = 0;
+        let currentQuestion = 0;
+
+        // Seeded PRNG for consistent deterministic shuffle per question
+        function seededRandom(seed) {
+            let x = Math.sin(seed) * 10000;
+            return x - Math.floor(x);
+        }
+
+        function shuffleArrayWithSeed(array, seed) {
+            let arr = [...array];
+            let s = seed;
+            for (let i = arr.length - 1; i > 0; i--) {
+                s += 17;
+                let j = Math.floor(seededRandom(s) * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Initialize and shuffle options pseudo-randomly
+        function initQuestions() {
+            quizData = [];
+            
+            for (let t = 0; t < 3; t++) {
+                const topicQuestions = [];
+                const items = rawQuestions[t];
+
+                items.forEach((item, idx) => {
+                    const originalCorrectText = item.options[item.correct];
+                    
+                    const seed = (t + 1) * 1000 + (idx + 1) * 31;
+                    const shuffledOptions = shuffleArrayWithSeed(item.options, seed);
+                    const newCorrectIndex = shuffledOptions.indexOf(originalCorrectText);
+
+                    topicQuestions.push({
+                        q: item.q,
+                        options: shuffledOptions,
+                        correct: newCorrectIndex,
+                        exp: item.exp,
+                        paper: item.paper
+                    });
+                });
+
+                quizData.push(topicQuestions);
+            }
+        }
+
+        // LocalStorage Management
+        const STORAGE_KEY = "grade5_math_assessment_quiz_state_en_v1";
+
+        function loadSavedState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed.userAnswers) userAnswers = parsed.userAnswers;
+                    if (parsed.currentTopic !== undefined) currentTopic = parsed.currentTopic;
+                    if (parsed.currentQuestion !== undefined) currentQuestion = parsed.currentQuestion;
+                }
+            } catch (e) {
+                console.error("Failed to load local storage:", e);
+            }
+        }
+
+        function saveState() {
+            try {
+                const data = {
+                    userAnswers,
+                    currentTopic,
+                    currentQuestion,
+                    timestamp: new Date().toISOString()
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                document.getElementById('last-saved-time').innerText = 'Saved ' + timeStr;
+            } catch (e) {
+                console.error("Failed to save progress:", e);
+            }
+        }
+
+        // Render Navigation Grid
+        function renderQuestionGrid() {
+            const gridContainer = document.getElementById("question-grid");
+            gridContainer.innerHTML = "";
+
+            const totalInTopic = quizData[currentTopic].length;
+            let answeredCount = 0;
+
+            for (let i = 0; i < totalInTopic; i++) {
+                const key = `${currentTopic}_${i}`;
+                const userAns = userAnswers[key];
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.innerText = i + 1;
+                
+                let baseClasses = "w-full aspect-square text-xs font-bold rounded-lg transition-all flex items-center justify-center border ";
+
+                if (userAns !== undefined) {
+                    answeredCount++;
+                    const isCorrect = userAns === quizData[currentTopic][i].correct;
+                    if (isCorrect) {
+                        baseClasses += "bg-emerald-500 text-white border-emerald-600 shadow-sm";
+                    } else {
+                        baseClasses += "bg-rose-500 text-white border-rose-600 shadow-sm";
+                    }
+                } else {
+                    baseClasses += "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200";
+                }
+
+                if (i === currentQuestion) {
+                    baseClasses += " ring-2 ring-blue-600 ring-offset-2 font-black scale-105";
+                }
+
+                btn.className = baseClasses;
+                btn.onclick = () => jumpToQuestion(i);
+                gridContainer.appendChild(btn);
+            }
+
+            document.getElementById("topic-progress-text").innerText = `${answeredCount} / ${totalInTopic} Answered`;
+            const pct = Math.round((answeredCount / totalInTopic) * 100);
+            document.getElementById("topic-progress-bar").style.width = `${pct}%`;
+        }
+
+        // Render Active Question
+        function renderActiveQuestion() {
+            const qData = quizData[currentTopic][currentQuestion];
+            const answerKey = `${currentTopic}_${currentQuestion}`;
+            const userAns = userAnswers[answerKey];
+
+            document.getElementById("question-number-badge").innerText = `Question #${currentQuestion + 1}`;
+            document.getElementById("paper-tag").innerText = qData.paper;
+            document.getElementById("subtopic-name-header").innerText = topics[currentTopic].title;
+            document.getElementById("question-counter-footer").innerText = `Question ${currentQuestion + 1} of ${quizData[currentTopic].length}`;
+
+            document.getElementById("question-text").innerHTML = qData.q;
+
+            const optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = "";
+
+            const optionLabels = ["A", "B", "C", "D"];
+
+            qData.options.forEach((optText, optIdx) => {
+                const optBtn = document.createElement("button");
+                optBtn.type = "button";
+                
+                let optClasses = "w-full text-left p-4 rounded-xl border transition-all flex items-start gap-3 group text-sm sm:text-base ";
+
+                if (userAns !== undefined) {
+                    optBtn.disabled = true;
+
+                    if (optIdx === qData.correct) {
+                        optClasses += "bg-emerald-50 border-emerald-300 text-emerald-900 font-medium ring-1 ring-emerald-400";
+                    } else if (optIdx === userAns && userAns !== qData.correct) {
+                        optClasses += "bg-rose-50 border-rose-300 text-rose-900 font-medium ring-1 ring-rose-400";
+                    } else {
+                        optClasses += "bg-slate-50/50 border-slate-200 text-slate-400 opacity-60";
+                    }
+                } else {
+                    optClasses += "bg-white border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 text-slate-800 shadow-sm active:scale-[0.99]";
+                }
+
+                optBtn.className = optClasses;
+                
+                let badgeClass = "w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 mt-0.5 ";
+                if (userAns !== undefined) {
+                    if (optIdx === qData.correct) {
+                        badgeClass += "bg-emerald-600 text-white";
+                    } else if (optIdx === userAns) {
+                        badgeClass += "bg-rose-600 text-white";
+                    } else {
+                        badgeClass += "bg-slate-200 text-slate-500";
+                    }
+                } else {
+                    badgeClass += "bg-slate-100 text-slate-600 group-hover:bg-blue-600 group-hover:text-white transition";
+                }
+
+                optBtn.innerHTML = `
+                    <span class="${badgeClass}">${optionLabels[optIdx]}</span>
+                    <span class="flex-grow pt-0.5">${optText}</span>
+                `;
+
+                optBtn.onclick = () => handleSelectOption(optIdx);
+                optionsContainer.appendChild(optBtn);
+            });
+
+            // Instant Feedback
+            const feedbackBox = document.getElementById("feedback-box");
+            const feedbackTitle = document.getElementById("feedback-title");
+            const feedbackExp = document.getElementById("feedback-explanation");
+
+            if (userAns !== undefined) {
+                feedbackBox.classList.remove("hidden");
+                const isCorrect = userAns === qData.correct;
+
+                if (isCorrect) {
+                    feedbackBox.className = "p-4 sm:p-5 rounded-xl border bg-emerald-50 border-emerald-200 text-emerald-900 shadow-sm";
+                    feedbackTitle.innerHTML = `
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <span>Your Answer is Correct! (+1 Point)</span>
+                    `;
+                } else {
+                    feedbackBox.className = "p-4 sm:p-5 rounded-xl border bg-rose-50 border-rose-200 text-rose-900 shadow-sm";
+                    feedbackTitle.innerHTML = `
+                        <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        <span>Incorrect Answer (Correct Key: Option ${optionLabels[qData.correct]})</span>
+                    `;
+                }
+
+                feedbackExp.innerHTML = `<strong class="block mb-1 text-slate-800">💡 Explanation / Solution:</strong> ${qData.exp}`;
+            } else {
+                feedbackBox.classList.add("hidden");
+            }
+
+            document.getElementById("prev-btn").disabled = (currentQuestion === 0);
+            document.getElementById("next-btn").disabled = (currentQuestion === quizData[currentTopic].length - 1);
+
+            renderQuestionGrid();
+            updateHeaderAndBadges();
+        }
+
+        function handleSelectOption(optionIndex) {
+            const key = `${currentTopic}_${currentQuestion}`;
+            if (userAnswers[key] !== undefined) return;
+
+            userAnswers[key] = optionIndex;
+            saveState();
+            renderActiveQuestion();
+        }
+
+        function navigateQuestion(direction) {
+            const max = quizData[currentTopic].length;
+            const newIndex = currentQuestion + direction;
+            if (newIndex >= 0 && newIndex < max) {
+                currentQuestion = newIndex;
+                saveState();
+                renderActiveQuestion();
+            }
+        }
+
+        function jumpToQuestion(index) {
+            currentQuestion = index;
+            saveState();
+            renderActiveQuestion();
+        }
+
+        function switchTab(tabIndex) {
+            currentTopic = tabIndex;
+
+            for (let i = 0; i <= 3; i++) {
+                const btn = document.getElementById(`tab-btn-${i}`);
+                if (i === tabIndex) {
+                    btn.className = "tab-button whitespace-nowrap px-4 py-2 rounded-lg text-sm font-semibold transition bg-white text-blue-900 shadow-md";
+                } else {
+                    btn.className = "tab-button whitespace-nowrap px-4 py-2 rounded-lg text-sm font-semibold transition text-blue-100 hover:bg-white/10";
+                }
+            }
+
+            if (tabIndex === 3) {
+                document.getElementById("quiz-view").classList.add("hidden");
+                document.getElementById("summary-view").classList.remove("hidden");
+                renderSummaryView();
+            } else {
+                document.getElementById("quiz-view").classList.remove("hidden");
+                document.getElementById("summary-view").classList.add("hidden");
+                document.getElementById("topic-title").innerText = topics[tabIndex].subtitle;
+                currentQuestion = 0;
+                saveState();
+                renderActiveQuestion();
+            }
+        }
+
+        function updateHeaderAndBadges() {
+            let grandTotalCorrect = 0;
+            let grandTotalAnswered = 0;
+            const grandTotalQuestions = 90;
+
+            for (let t = 0; t < 3; t++) {
+                let topicAnswered = 0;
+                for (let q = 0; q < 30; q++) {
+                    const ans = userAnswers[`${t}_${q}`];
+                    if (ans !== undefined) {
+                        grandTotalAnswered++;
+                        topicAnswered++;
+                        if (ans === quizData[t][q].correct) {
+                            grandTotalCorrect++;
+                        }
+                    }
+                }
+                document.getElementById(`badge-tab-${t}`).innerText = `${topicAnswered}/30`;
+            }
+
+            document.getElementById("header-score").innerText = `${grandTotalCorrect} / ${grandTotalQuestions}`;
+            const accuracy = grandTotalAnswered > 0 ? Math.round((grandTotalCorrect / grandTotalAnswered) * 100) : 0;
+            document.getElementById("header-accuracy").innerText = `${accuracy}%`;
+        }
+
+        function renderSummaryView() {
+            let totalCorrect = 0;
+            let totalAnswered = 0;
+            const topicStats = [];
+
+            for (let t = 0; t < 3; t++) {
+                let tCorrect = 0;
+                let tAnswered = 0;
+                for (let q = 0; q < 30; q++) {
+                    const ans = userAnswers[`${t}_${q}`];
+                    if (ans !== undefined) {
+                        tAnswered++;
+                        totalAnswered++;
+                        if (ans === quizData[t][q].correct) {
+                            tCorrect++;
+                            totalCorrect++;
+                        }
+                    }
+                }
+                topicStats.push({ title: topics[t].subtitle, correct: tCorrect, answered: tAnswered, total: 30 });
+            }
+
+            document.getElementById("summary-total-answered").innerText = `${totalAnswered} / 90`;
+            document.getElementById("summary-correct").innerText = totalCorrect;
+            document.getElementById("summary-incorrect").innerText = totalAnswered - totalCorrect;
+            
+            const overallAccuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+            document.getElementById("summary-score-percent").innerText = `${overallAccuracy}%`;
+
+            const breakdownContainer = document.getElementById("summary-topic-breakdown");
+            breakdownContainer.innerHTML = "";
+
+            topicStats.forEach((st) => {
+                const pct = st.answered > 0 ? Math.round((st.correct / st.answered) * 100) : 0;
+                const div = document.createElement("div");
+                div.className = "p-4 rounded-xl bg-slate-50 border border-slate-200";
+                div.innerHTML = `
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-1 mb-2">
+                        <span class="font-bold text-slate-800 text-sm">${st.title}</span>
+                        <span class="text-xs font-semibold text-slate-600">
+                            ${st.correct} Correct out of ${st.answered} Answered (Accuracy: ${pct}%)
+                        </span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden">
+                        <div class="bg-blue-600 h-3 rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+                    </div>
+                `;
+                breakdownContainer.appendChild(div);
+            });
+        }
+
+        function openResetModal() {
+            document.getElementById("reset-modal").classList.remove("hidden");
+        }
+
+        function closeResetModal() {
+            document.getElementById("reset-modal").classList.add("hidden");
+        }
+
+        function confirmReset() {
+            userAnswers = {};
+            currentTopic = 0;
+            currentQuestion = 0;
+            localStorage.removeItem(STORAGE_KEY);
+            closeResetModal();
+            switchTab(0);
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            initQuestions();
+            loadSavedState();
+            switchTab(currentTopic);
+        });
+    </script>
+</body>
+</html>
